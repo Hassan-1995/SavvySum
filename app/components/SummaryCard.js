@@ -10,7 +10,7 @@ import Icon from "./Icon";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function SummaryCard({ onLedgerChange }) {
+function SummaryCard({ onLedgerChange, currentLedger }) {
   const [income, setIncome] = useState(true);
   const [expense, setExpense] = useState(false);
 
@@ -28,7 +28,7 @@ function SummaryCard({ onLedgerChange }) {
   return (
     <>
       <View style={styles.searchBox}>
-        <AppText style={styles.ledgerTitle}>Hello</AppText>
+        <AppText style={styles.ledgerTitle}>{currentLedger.name}</AppText>
         <TouchableHighlight
           underlayColor={colors.light}
           onPress={onLedgerChange}

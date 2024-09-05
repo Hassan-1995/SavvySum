@@ -17,19 +17,30 @@ import SummaryCard from "../components/SummaryCard";
 import AppText from "../components/AppText";
 import TableRow from "../components/TableRow";
 import AppButton from "../components/AppButton";
+import Icon from "../components/Icon";
 
 const { width, height } = Dimensions.get("window");
 
+const data = [
+  { id: 1, name: "Family", age: 30 },
+  { id: 2, name: "Business", age: 25 },
+  { id: 3, name: "Project", age: 35 },
+];
+
 function LedgerInfoScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
-
-  const Test = () => {
-    console.log("hello");
-  };
+  const [selectedLedgerId, setSelectedLedgerId] = useState(null);
+  const [ledger, setLedger] = useState(data[0]);
 
   const nameOfLedger = () => {
     console.log("onLedgerChange");
     setModalVisible(true);
+  };
+  const selectLedger = (id) => {
+    setSelectedLedgerId(id);
+    setModalVisible(false);
+    setLedger(data[id - 1]);
+    console.log(ledger.name);
   };
 
   return (
@@ -42,7 +53,10 @@ function LedgerInfoScreen(props) {
             <TableRow />
             <TableRow />
           </ScrollView>
-          <AppButton title={"Add New Customer"} />
+          <AppButton
+            title={"Add New Customer"}
+            onPress={() => console.log("AddNewCustomer")}
+          />
         </View>
 
         <View style={styles.container}>
@@ -55,7 +69,7 @@ function LedgerInfoScreen(props) {
             <HeaderComponent />
           </View>
           <View style={styles.summaryContainer}>
-            <SummaryCard onLedgerChange={nameOfLedger} />
+            <SummaryCard onLedgerChange={nameOfLedger} currentLedger={ledger} />
           </View>
         </View>
       </Screen>
@@ -70,11 +84,31 @@ function LedgerInfoScreen(props) {
           </TouchableOpacity>
           <View style={styles.modalView}>
             <View style={styles.dash} />
-            <AppText style={styles.modalHeader}>Add New Ledger</AppText>
-            <AppText style={styles.ledgerName}>Add New Ledger</AppText>
-            <AppText style={styles.ledgerName}>Add New Ledger</AppText>
-            <AppText style={styles.ledgerName}>Add New Ledger</AppText>
-            <AppText style={styles.ledgerName}>Add New Ledger</AppText>
+            <TouchableOpacity>
+              <AppText style={styles.modalHeader}>Add New Ledger</AppText>
+            </TouchableOpacity>
+            {data.map((ledger) => (
+              <TouchableOpacity
+                key={ledger.id}
+                onPress={() => selectLedger(ledger.id)}
+                style={{ flexDirection: "row" }}
+              >
+                {selectedLedgerId === ledger.id ? (
+                  <Icon
+                    name={"check-circle-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.income}
+                  />
+                ) : (
+                  <Icon
+                    name={"checkbox-blank-circle-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.income}
+                  />
+                )}
+                <AppText style={styles.ledgerName}>{ledger.name}</AppText>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </Modal>
@@ -116,6 +150,7 @@ const styles = StyleSheet.create({
   content: {
     height: "80%",
     width: "100%",
+    paddingHorizontal: 5,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     overflow: "hidden",
@@ -160,6 +195,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 10,
     marginBottom: 5,
+    flex: 1,
   },
 });
 

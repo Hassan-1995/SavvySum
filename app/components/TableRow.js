@@ -2,14 +2,13 @@ import React from "react";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
-import Icon from "./Icon";
 import AppText from "./AppText";
 
 function TableRow(props) {
   return (
     <>
       <TouchableOpacity style={styles.container}>
-        <Icon size={30} />
+        {/* <Icon size={30} /> */}
         <View style={styles.row}>
           <AppText style={styles.name}>Hammad Ahmed</AppText>
           <AppText style={styles.amount}>Rs 100,000</AppText>
@@ -24,7 +23,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.light,
+    backgroundColor: colors.secondary,
     padding: 20,
     borderRadius: 15,
   },
@@ -34,17 +33,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   name: {
-    marginLeft: 15,
-    fontSize: 20,
-    color: colors.dark,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.white,
   },
-  amount: {},
+  amount: {
+    fontSize: 18,
+  },
   dash: {
     width: "90%",
     height: 2,
     backgroundColor: colors.primary,
     alignSelf: "center",
     elevation: 5,
+    marginVertical: 2,
   },
 });
 
