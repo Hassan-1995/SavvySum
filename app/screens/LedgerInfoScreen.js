@@ -18,6 +18,7 @@ import AppText from "../components/AppText";
 import TableRow from "../components/TableRow";
 import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
+import AppTextInputDynamic from "../components/AppTextInputDynamic";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,17 +29,19 @@ const data = [
 ];
 
 function LedgerInfoScreen(props) {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalLedgerListVisible, setModalLedgerListVisible] = useState(false);
+  const [modalAddLedgerVisible, setModalAddLedgerVisible] = useState(false);
   const [selectedLedgerId, setSelectedLedgerId] = useState(null);
   const [ledger, setLedger] = useState(data[0]);
+  const [newLedger, onChangeNewLedger] = useState("");
 
   const nameOfLedger = () => {
     console.log("onLedgerChange");
-    setModalVisible(true);
+    setModalLedgerListVisible(true);
   };
   const selectLedger = (id) => {
     setSelectedLedgerId(id);
-    setModalVisible(false);
+    setModalLedgerListVisible(false);
     setLedger(data[id - 1]);
     console.log(ledger.name);
   };
@@ -73,42 +76,87 @@ function LedgerInfoScreen(props) {
           </View>
         </View>
       </Screen>
-
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      {/* Show list of ledgers */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalLedgerListVisible}
+      >
         <View style={styles.modalContainer}>
           <TouchableOpacity
             style={{ flex: 1 }}
-            onPress={() => setModalVisible(!modalVisible)}
-          >
-            {/* This View takes up the remaining space and is touchable to close the modal */}
-          </TouchableOpacity>
+            onPress={() => setModalLedgerListVisible(!modalLedgerListVisible)}
+          ></TouchableOpacity>
           <View style={styles.modalView}>
             <View style={styles.dash} />
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setModalLedgerListVisible(false);
+                setModalAddLedgerVisible(true);
+              }}
+            >
               <AppText style={styles.modalHeader}>Add New Ledger</AppText>
             </TouchableOpacity>
             {data.map((ledger) => (
-              <TouchableOpacity
-                key={ledger.id}
-                onPress={() => selectLedger(ledger.id)}
-                style={{ flexDirection: "row" }}
-              >
-                {selectedLedgerId === ledger.id ? (
+              <View style={{ flexDirection: "row" }} key={ledger.id}>
+                <TouchableOpacity
+                  onPress={() => selectLedger(ledger.id)}
+                  style={{ flexDirection: "row", flex: 1 }}
+                >
+                  {selectedLedgerId === ledger.id ? (
+                    <Icon
+                      name={"check-circle-outline"}
+                      backgroundColor="transparent"
+                      iconColor={colors.income}
+                    />
+                  ) : (
+                    <Icon
+                      name={"checkbox-blank-circle-outline"}
+                      backgroundColor="transparent"
+                      iconColor={colors.income}
+                    />
+                  )}
+                  <AppText style={styles.ledgerName}>{ledger.name}</AppText>
+                </TouchableOpacity>
+                <TouchableOpacity>
                   <Icon
-                    name={"check-circle-outline"}
+                    name={"trash-can-outline"}
                     backgroundColor="transparent"
-                    iconColor={colors.income}
+                    iconColor={colors.expense}
                   />
-                ) : (
-                  <Icon
-                    name={"checkbox-blank-circle-outline"}
-                    backgroundColor="transparent"
-                    iconColor={colors.income}
-                  />
-                )}
-                <AppText style={styles.ledgerName}>{ledger.name}</AppText>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
             ))}
+          </View>
+        </View>
+      </Modal>
+      {/* Add new ledger */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalAddLedgerVisible}
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            onPress={() => setModalAddLedgerVisible(!modalAddLedgerVisible)}
+          ></TouchableOpacity>
+          <View style={styles.modalView}>
+            <View style={styles.dash} />
+            <AppText style={styles.modalHeader}>Add Ledger</AppText>
+            <AppTextInputDynamic
+              onChangeText={onChangeNewLedger}
+              value={newLedger}
+              icon={"book-open-page-variant-outline"}
+              placeholder={"Name of customer"}
+            />
+            <AppButton
+              title={"Save"}
+              onPress={() => {
+                setModalAddLedgerVisible(false);
+                console.log(newLedger);
+              }}
+            />
           </View>
         </View>
       </Modal>

@@ -7,14 +7,21 @@ import CalculatorScreen from "./app/components/CalculatorScreen";
 import CalculatorComponent from "./app/components/CalculatorComponent";
 import ReceiptInfoScreen from "./app/screens/ReceiptInfoScreen";
 import WelcomeScreen from "./app/screens/WelcomeScreen";
+import RegisterationScreen from "./app/screens/RegisterationScreen";
+import LoginScreen from "./app/screens/LoginScreen";
+import AddNewParticipants from "./app/screens/AddNewParticipants";
 
 export default function App() {
   return (
-    // <LedgerInfoScreen />
+    <LedgerInfoScreen />
     // <DetailRecordScreen />
     // <EntryLedgerScreen />
     // <ReceiptInfoScreen />
-    <WelcomeScreen />
+    // <WelcomeScreen />
+    // <RegisterationScreen />
+    // <LoginScreen />
+    // <AddNewParticipants/>
+
     // <CalculatorComponent />
     // <CalculatorScreen />
   );

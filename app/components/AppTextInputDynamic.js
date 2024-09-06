@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import defaultStyles from "../config/styles";
+import colors from "../config/colors";
 
 function AppTextInputDynamic({
   icon,
@@ -30,8 +31,9 @@ function AppTextInputDynamic({
       {icon && (
         <MaterialCommunityIcons
           name={icon}
-          size={20}
-          color={defaultStyles.colors.medium}
+          size={25}
+          // color={defaultStyles.colors.medium}
+          color={isFocused ? colors.primary : colors.medium}
           style={styles.icon}
         />
       )}
