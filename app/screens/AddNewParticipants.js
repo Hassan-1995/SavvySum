@@ -18,7 +18,7 @@ import Icon from "../components/Icon";
 
 const { width, height } = Dimensions.get("window");
 
-function AddNewParticipants(props) {
+function AddNewParticipants({ navigation }) {
   const [text, onChangeText] = useState();
   return (
     <Screen>
@@ -45,7 +45,7 @@ function AddNewParticipants(props) {
           <HeaderComponent />
         </View>
         <View style={styles.subHeaderContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon
               name={"arrow-left-drop-circle-outline"}
               size={50}

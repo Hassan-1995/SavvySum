@@ -6,7 +6,7 @@ import AppButton from "../components/AppButton";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 
-function WelcomeScreen(props) {
+function WelcomeScreen({ navigation }) {
   return (
     <Screen>
       <View style={styles.container}>
@@ -26,8 +26,16 @@ function WelcomeScreen(props) {
           </AppText>
         </View>
         <View style={styles.buttonContainer}>
-          <AppButton title={"Register"} color="primary" />
-          <AppButton title={"Login"} color="secondary" />
+          <AppButton
+            title={"Register"}
+            color="primary"
+            onPress={() => navigation.navigate("Register Screen")}
+          />
+          <AppButton
+            title={"Login"}
+            color="secondary"
+            onPress={() => navigation.navigate("Login Screen")}
+          />
         </View>
       </View>
     </Screen>

@@ -24,10 +24,11 @@ import AppTextInputDynamic from "../components/AppTextInputDynamic";
 
 const { width, height } = Dimensions.get("window");
 
-function EntryLedgerScreen(props) {
+function EntryLedgerScreen({ navigation, route }) {
+  const { title } = route.params;
+
   const [input, setInput] = useState("");
   const [lastResult, setLastResult] = useState("");
-  const [calculatorVisible, setCalculatorVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleCalculatorButtons = (buttonValue) => {
@@ -119,7 +120,15 @@ function EntryLedgerScreen(props) {
           <AppButton
             title={"save"}
             disabled={input == "" ? true : false}
-            color={input == "" ? "green" : "income"}
+            color={
+              input == "" && title == "gave"
+                ? "red"
+                : input == "" && title == "received"
+                ? "green"
+                : input !== "" && title == "received"
+                ? "income"
+                : "expense"
+            }
           />
           {!isFocused ? (
             <CalculatorComponent
@@ -141,14 +150,16 @@ function EntryLedgerScreen(props) {
           <HeaderComponent />
         </View>
         <View style={styles.subHeaderContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon
               name={"arrow-left-drop-circle-outline"}
               size={50}
               backgroundColor="transparent"
             />
           </TouchableOpacity>
-          <AppText style={styles.entry}>I gave to Hammad</AppText>
+          <AppText style={styles.entry}>
+            I {title} {title == "gave" ? "to" : "from"} Hammad
+          </AppText>
         </View>
       </View>
     </Screen>

@@ -1,25 +1,31 @@
 import React from "react";
-
 import Constants from "expo-constants";
-
 import { SafeAreaView, StyleSheet, View } from "react-native";
+import colors from "../config/colors";
 
-function Screen({ children, style }) {
+function Screen({ children, style, statusBarOverlayColor = colors.secondary }) {
   return (
-    <SafeAreaView style={[styles.screen, style]}>
-      <View style={[styles.view, style]}>{children}</View>
-    </SafeAreaView>
+    <>
+      {/* This view acts as an overlay over the status bar */}
+      <View
+        style={[styles.statusBar, { backgroundColor: statusBarOverlayColor }]}
+      />
+      <SafeAreaView style={[styles.screen, style]}>
+        <View style={[styles.view, style]}>{children}</View>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  statusBar: {
+    height: Constants.statusBarHeight,
+  },
   screen: {
-    paddingTop: Constants.statusBarHeight,
     flex: 1,
   },
   view: {
     flex: 1,
-    // backgroundColor: "red",
   },
 });
 

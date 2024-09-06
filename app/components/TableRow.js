@@ -4,10 +4,10 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function TableRow(props) {
+function TableRow({ handlePress }) {
   return (
     <>
-      <TouchableOpacity style={styles.container}>
+      <TouchableOpacity style={styles.container} onPress={handlePress}>
         {/* <Icon size={30} /> */}
         <View style={styles.row}>
           <AppText style={styles.name}>Hammad Ahmed</AppText>
@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.secondary,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
     borderRadius: 15,
   },
   row: {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignSelf: "center",
     elevation: 5,
-    marginVertical: 2,
+    marginVertical: 4,
   },
 });
 

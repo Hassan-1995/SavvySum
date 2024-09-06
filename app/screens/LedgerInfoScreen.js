@@ -28,7 +28,7 @@ const data = [
   { id: 3, name: "Project", age: 35 },
 ];
 
-function LedgerInfoScreen(props) {
+function LedgerInfoScreen({ navigation }) {
   const [modalLedgerListVisible, setModalLedgerListVisible] = useState(false);
   const [modalAddLedgerVisible, setModalAddLedgerVisible] = useState(false);
   const [selectedLedgerId, setSelectedLedgerId] = useState(null);
@@ -52,13 +52,37 @@ function LedgerInfoScreen(props) {
         <View style={styles.content}>
           <ScrollView>
             <View style={{ marginTop: "15%" }} />
-            <TableRow />
-            <TableRow />
-            <TableRow />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
+            <TableRow
+              handlePress={() => navigation.navigate("Detail Screen")}
+            />
           </ScrollView>
           <AppButton
             title={"Add New Customer"}
-            onPress={() => console.log("AddNewCustomer")}
+            onPress={() => navigation.navigate("Add Member")}
           />
         </View>
 

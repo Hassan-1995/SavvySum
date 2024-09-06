@@ -71,7 +71,7 @@ const transactions = [
   // Add more transaction objects as needed
 ];
 
-function DetailRecordScreen(props) {
+function DetailRecordScreen({ navigation }) {
   return (
     <Screen>
       <View style={styles.content}>
@@ -81,10 +81,24 @@ function DetailRecordScreen(props) {
 
         <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
           <View style={{ width: "45%" }}>
-            <AppButton color="income" title={"Received"} />
+            <AppButton
+              color="income"
+              title={"Received"}
+              onPress={() =>
+                navigation.navigate("New Transaction Entry", {
+                  title: "received",
+                })
+              }
+            />
           </View>
           <View style={{ width: "45%" }}>
-            <AppButton color="expense" title={"Gave"} />
+            <AppButton
+              color="expense"
+              title={"Gave"}
+              onPress={() =>
+                navigation.navigate("New Transaction Entry", { title: "gave" })
+              }
+            />
           </View>
         </View>
         {/* </ScrollView> */}
@@ -100,7 +114,7 @@ function DetailRecordScreen(props) {
           <HeaderComponent />
         </View>
         <View style={styles.clientInfoContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon
               name={"arrow-left-drop-circle-outline"}
               size={50}
