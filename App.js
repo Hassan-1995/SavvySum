@@ -14,6 +14,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigator from "./app/navigation/AuthNavigator";
 import navigationTheme from "./app/navigation/navigationTheme";
 import ManageEntryScreen from "./app/screens/ManageEntryScreen";
+import TestingScreen from "./app/screens/TestingScreen";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
     // <LoginScreen />
     // <AddNewParticipants />
     // <ManageEntryScreen />
+    // <TestingScreen />
 
     // <CalculatorComponent />
     // <CalculatorScreen />

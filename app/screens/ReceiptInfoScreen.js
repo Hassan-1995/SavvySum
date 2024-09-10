@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
+import ViewShot from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 
 import {
   View,
@@ -21,21 +23,49 @@ const { width, height } = Dimensions.get("window");
 function ReceiptInfoScreen({ navigation, route }) {
   const { receipt } = route.params;
   console.log("Receipt: ", receipt);
+
+  const viewShotRef = useRef();
+
+  const captureAndShare = async () => {
+    try {
+      const uri = await viewShotRef.current.capture();
+      // Use expo-sharing to open WhatsApp with the image
+      await Sharing.shareAsync(uri, {
+        dialogTitle: "Share your screenshot",
+        mimeType: "image/jpeg",
+      });
+    } catch (error) {
+      console.log("Error sharing image:", error);
+    }
+  };
+
   return (
     <Screen>
       <View style={styles.content}>
         <View style={{ marginTop: "10%" }} />
         <AppText style={styles.heading}>PAYMENT RECEIPT</AppText>
 
-        <View style={styles.card}>
+        <ViewShot
+          ref={viewShotRef}
+          options={{ format: "jpg", quality: 1.0 }}
+          style={styles.card}
+        >
           <AppText style={styles.cardHeading}>Payment receipt</AppText>
           <AppText style={styles.cardSubheading}>
             {DateFormat(new Date(receipt.date))}
           </AppText>
-          <View style={styles.ribbon}>
+          <View
+            style={[
+              styles.ribbon,
+              {
+                backgroundColor:
+                  receipt?.type == "expense" ? colors.expense : colors.income,
+              },
+            ]}
+          >
             <View style={{ padding: 20 }}>
               <AppText style={{ color: colors.white, fontWeight: "bold" }}>
-                You gave
+                You {receipt?.type == "expense" ? "received" : "gave"}
               </AppText>
               <AppText
                 style={{
@@ -69,15 +99,17 @@ function ReceiptInfoScreen({ navigation, route }) {
               source={require("../assets/LogoNameWithColors.png")}
             />
           </View>
-        </View>
+        </ViewShot>
         <TouchableOpacity
           style={{
             width: "100%",
             alignItems: "flex-end",
             padding: 20,
           }}
+          onPress={captureAndShare}
         >
           <Icon
+            // name={"whatsapp"}
             name={"share-variant-outline"}
             size={50}
             iconColor={colors.primary}
@@ -103,18 +135,48 @@ function ReceiptInfoScreen({ navigation, route }) {
               backgroundColor="transparent"
             />
           </TouchableOpacity>
-          <AppText style={styles.receipt}>I received</AppText>
+          <AppText style={styles.receipt}>
+            I {receipt?.type == "expense" ? "gave" : "received"}
+          </AppText>
         </View>
-        <View style={styles.amountInfoContainer}>
+        <View
+          style={[
+            styles.amountInfoContainer,
+            {
+              backgroundColor:
+                receipt?.type == "expense" ? colors.red : colors.green,
+            },
+          ]}
+        >
           <Icon
             name={"arrow-down-thin"}
-            iconColor={colors.green}
+            iconColor={receipt?.type == "expense" ? colors.red : colors.green}
             size={40}
-            backgroundColor={colors.income}
+            backgroundColor={
+              receipt?.type == "expense" ? colors.expense : colors.income
+            }
           />
           <View style={styles.amount}>
-            <AppText style={styles.title}>Rs. {receipt?.amount} </AppText>
-            <AppText style={styles.subTitle}>
+            <AppText
+              style={[
+                styles.title,
+                {
+                  color:
+                    receipt?.type == "expense" ? colors.expense : colors.income,
+                },
+              ]}
+            >
+              Rs. {receipt?.amount}{" "}
+            </AppText>
+            <AppText
+              style={[
+                styles.subTitle,
+                {
+                  color:
+                    receipt?.type == "expense" ? colors.expense : colors.income,
+                },
+              ]}
+            >
               {DateFormat(new Date(receipt.date))}
             </AppText>
           </View>
