@@ -19,7 +19,14 @@ import Icon from "../components/Icon";
 const { width, height } = Dimensions.get("window");
 
 function AddNewParticipants({ navigation }) {
-  const [text, onChangeText] = useState();
+  const [text, onChangeText] = useState("");
+
+  const handleAdd = () => {
+    console.log(text);
+    // Pass the text back to the previous screen
+    // navigation.goBack({ newParticular: text });
+    navigation.navigate("Ledger Screen", { newParticular: text });
+  };
   return (
     <Screen>
       <View style={styles.content}>
@@ -31,7 +38,7 @@ function AddNewParticipants({ navigation }) {
             icon={"plus-circle-outline"}
             placeholder={"Name of customer"}
           />
-          <AppButton title={"Add"} onPress={() => console.log(text)} />
+          <AppButton title={"Add"} onPress={handleAdd} />
         </ScrollView>
       </View>
 

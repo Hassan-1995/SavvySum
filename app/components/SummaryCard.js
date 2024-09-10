@@ -10,7 +10,7 @@ import Icon from "./Icon";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function SummaryCard({ onLedgerChange, currentLedger }) {
+function SummaryCard({ onLedgerChange, currentLedger, totalSum }) {
   const [income, setIncome] = useState(true);
   const [expense, setExpense] = useState(false);
 
@@ -28,7 +28,7 @@ function SummaryCard({ onLedgerChange, currentLedger }) {
   return (
     <>
       <View style={styles.searchBox}>
-        <AppText style={styles.ledgerTitle}>{currentLedger.name}</AppText>
+        <AppText style={styles.ledgerTitle}>{currentLedger}</AppText>
         <TouchableHighlight
           underlayColor={colors.light}
           onPress={onLedgerChange}
@@ -60,7 +60,7 @@ function SummaryCard({ onLedgerChange, currentLedger }) {
                 { color: income ? colors.white : colors.income },
               ]}
             >
-              Rs 100,000
+              {(totalSum?.totalIncome).toLocaleString()}
             </AppText>
             <AppText
               style={[
@@ -91,7 +91,7 @@ function SummaryCard({ onLedgerChange, currentLedger }) {
                 { color: expense ? colors.white : colors.expense },
               ]}
             >
-              Rs 100,000
+              {(totalSum?.totalExpenses).toLocaleString()}
             </AppText>
             <AppText
               style={[

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import entriesApi from "../api/entries";
+
 import {
   View,
   StyleSheet,
@@ -25,16 +27,16 @@ import DateFormat from "../components/DateFormat";
 
 const { width, height } = Dimensions.get("window");
 
-function EntryLedgerScreen({ navigation, route }) {
-  const { title, particularID } = route.params;
+function ManageEntryScreen({ navigation, route }) {
+  const { pressedEntry } = route.params;
 
-  const [input, setInput] = useState(""); // variable for entered amount
-  const [description, setDescription] = useState(""); // variable for entered description
+  const [input, setInput] = useState(pressedEntry?.amount); // variable for entered amount
+  const [description, setDescription] = useState(pressedEntry?.description); // variable for entered description
 
   const [lastResult, setLastResult] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(pressedEntry?.date) || new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
@@ -62,26 +64,40 @@ function EntryLedgerScreen({ navigation, route }) {
     }
   };
 
-  const formattedDate = (enteredDate) => {
-    const year = enteredDate.getFullYear();
-    const month = String(enteredDate.getMonth() + 1).padStart(2, "0"); // Add leading zero
-    const day = String(enteredDate.getDate()).padStart(2, "0"); // Add leading zero
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-  };
-
-  const saveNewEntry = () => {
-    const temp = formattedDate(date);
+  const saveUpdatedEntry = async () => {
+    const temp = new Date(date).toISOString().split("T")[0];
     setTime(temp);
 
-    const newData = {
-      particular_id: particularID.particular_id,
+    const updatedData = {
+      ...pressedEntry,
       amount: input,
-      date: temp,
       description: description,
-      type: title == "gave" ? "expense" : "income",
+      date: temp,
     };
-    navigation.navigate("Ledger Screen", { newEntryData: newData });
+
+    try {
+      const response = await entriesApi.updateEntryByEntryID(
+        updatedData.entry_id,
+        updatedData
+      );
+    } catch (error) {
+      console.error("Error updating entry data:", error);
+    } finally {
+      navigation.navigate("Ledger Screen", {
+        updatedEntry: updatedData,
+      });
+    }
+  };
+  const deleteEntry = async () => {
+    try {
+      const response = await entriesApi.deleteEntryByEntryID(
+        pressedEntry.entry_id
+      );
+    } catch (error) {
+      console.error("Error deleting entry data:", error);
+    } finally {
+      navigation.navigate("Ledger Screen");
+    }
   };
 
   const onChange = (event, selectedDate) => {
@@ -185,23 +201,65 @@ function EntryLedgerScreen({ navigation, route }) {
                 <AppText style={styles.buttonTitle}>Bill copy</AppText>
               </View>
             </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginHorizontal: 20,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  justifyContent: "flex-end",
+                  marginTop: 10,
+                  alignItems: "center",
+                }}
+                onPress={() => deleteEntry(pressedEntry.entry_id)}
+              >
+                <Icon
+                  name={"trash-can-outline"}
+                  backgroundColor="transparent"
+                  iconColor={colors.primary}
+                />
+                <AppText style={styles.buttonTitle}>Delete</AppText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  justifyContent: "flex-end",
+                  marginTop: 10,
+                  alignItems: "center",
+                }}
+                onPress={() =>
+                  navigation.navigate("Receipt", {
+                    receipt: pressedEntry,
+                  })
+                }
+              >
+                <Icon
+                  name={"receipt"}
+                  backgroundColor="transparent"
+                  iconColor={colors.primary}
+                />
+                <AppText style={styles.buttonTitle}>Receipt</AppText>
+              </TouchableOpacity>
+            </View>
           </>
         )}
 
         <View style={styles.bottomContainer}>
           <AppButton
-            title={"save"}
+            title={"Update"}
             disabled={input == "" ? true : false}
             color={
-              input == "" && title == "gave"
+              input == "" && pressedEntry?.type == "expense"
                 ? "red"
-                : input == "" && title == "received"
+                : input == "" && pressedEntry?.type == "income"
                 ? "green"
-                : input !== "" && title == "received"
+                : input !== "" && pressedEntry?.type == "income"
                 ? "income"
                 : "expense"
             }
-            onPress={saveNewEntry}
+            onPress={saveUpdatedEntry}
           />
           {!isFocused ? (
             <CalculatorComponent
@@ -231,7 +289,8 @@ function EntryLedgerScreen({ navigation, route }) {
             />
           </TouchableOpacity>
           <AppText style={styles.entry}>
-            I {title} {title == "gave" ? "to" : "from"} Hammad
+            I {pressedEntry?.type == "expense" ? "gave" : "received"}{" "}
+            {pressedEntry?.type == "expense" ? "to" : "from"} Hammad
           </AppText>
         </View>
       </View>
@@ -328,4 +387,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EntryLedgerScreen;
+export default ManageEntryScreen;

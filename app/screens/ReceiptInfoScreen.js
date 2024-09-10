@@ -14,10 +14,13 @@ import HeaderComponent from "../components/HeaderComponent";
 import Icon from "../components/Icon";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
+import DateFormat from "../components/DateFormat";
 
 const { width, height } = Dimensions.get("window");
 
-function ReceiptInfoScreen(props) {
+function ReceiptInfoScreen({ navigation, route }) {
+  const { receipt } = route.params;
+  console.log("Receipt: ", receipt);
   return (
     <Screen>
       <View style={styles.content}>
@@ -26,7 +29,9 @@ function ReceiptInfoScreen(props) {
 
         <View style={styles.card}>
           <AppText style={styles.cardHeading}>Payment receipt</AppText>
-          <AppText style={styles.cardSubheading}>8:17 PM 3rd Sept, 24</AppText>
+          <AppText style={styles.cardSubheading}>
+            {DateFormat(new Date(receipt.date))}
+          </AppText>
           <View style={styles.ribbon}>
             <View style={{ padding: 20 }}>
               <AppText style={{ color: colors.white, fontWeight: "bold" }}>
@@ -39,14 +44,15 @@ function ReceiptInfoScreen(props) {
                   fontSize: 30,
                 }}
               >
-                Rs. 1,000
+                Rs. {receipt?.amount}
               </AppText>
             </View>
-
-            <Image
-              style={styles.receiptImage}
-              source={require("../assets/receipt.png")}
-            />
+            <View style={{ flex: 1, justifyContent: "center" }}>
+              <Image
+                style={styles.receiptImage}
+                source={require("../assets/receipt.png")}
+              />
+            </View>
           </View>
           <View
             style={{
@@ -55,7 +61,9 @@ function ReceiptInfoScreen(props) {
               alignItems: "center",
             }}
           >
-            <AppText style={{ fontWeight: "bold" }}>Ledger Name</AppText>
+            <AppText style={{ fontWeight: "bold" }}>
+              Purpose: {receipt.description}
+            </AppText>
             <Image
               style={styles.logo}
               source={require("../assets/LogoNameWithColors.png")}
@@ -70,10 +78,8 @@ function ReceiptInfoScreen(props) {
           }}
         >
           <Icon
-            // name={"whatsapp"}
             name={"share-variant-outline"}
             size={50}
-            // iconColor="#25D366"
             iconColor={colors.primary}
             backgroundColor="transparent"
           />
@@ -90,7 +96,7 @@ function ReceiptInfoScreen(props) {
           <HeaderComponent />
         </View>
         <View style={styles.subHeaderContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon
               name={"arrow-left-drop-circle-outline"}
               size={50}
@@ -98,15 +104,6 @@ function ReceiptInfoScreen(props) {
             />
           </TouchableOpacity>
           <AppText style={styles.receipt}>I received</AppText>
-
-          <TouchableOpacity style={styles.deleteButton}>
-            <Icon
-              name={"trash-can-outline"}
-              size={40}
-              backgroundColor="transparent"
-              iconColor={colors.red}
-            />
-          </TouchableOpacity>
         </View>
         <View style={styles.amountInfoContainer}>
           <Icon
@@ -116,17 +113,11 @@ function ReceiptInfoScreen(props) {
             backgroundColor={colors.income}
           />
           <View style={styles.amount}>
-            <AppText style={styles.title}>Rs. 1,000 </AppText>
-            <AppText style={styles.subTitle}>1st Sept, 24</AppText>
+            <AppText style={styles.title}>Rs. {receipt?.amount} </AppText>
+            <AppText style={styles.subTitle}>
+              {DateFormat(new Date(receipt.date))}
+            </AppText>
           </View>
-          <TouchableOpacity style={styles.edit}>
-            <Icon
-              name={"circle-edit-outline"}
-              iconColor={colors.income}
-              size={50}
-              backgroundColor="transparent"
-            />
-          </TouchableOpacity>
         </View>
       </View>
     </Screen>
@@ -248,6 +239,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: "contain",
+    alignSelf: "flex-end",
   },
   logo: {
     width: 100,

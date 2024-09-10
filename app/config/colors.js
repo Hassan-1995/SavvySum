@@ -1,15 +1,15 @@
 export default {
   primary: "#ff5733",
   secondary: "#ffaa33",
-  tertiary: "#f5ecfe",
+  tertiary: "#ffcc80",
 
   income: "#28a745",
   expense: "#dc3545",
   link: "#007bff",
-  
+
   green: "#e6f0e6",
-  red: '#fcd4d4',
-  
+  red: "#fcd4d4",
+
   black: "#000",
   danger: "#ff5252",
   dark: "#0c0c0c",
