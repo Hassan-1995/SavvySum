@@ -15,7 +15,9 @@ import AuthNavigator from "./app/navigation/AuthNavigator";
 import navigationTheme from "./app/navigation/navigationTheme";
 import ManageEntryScreen from "./app/screens/ManageEntryScreen";
 import TestingScreen from "./app/screens/TestingScreen";
-import DrawerNavigator from "./app/navigation/DrawNavigator";
+import AppNavigator from "./app/navigation/AppNavigator";
+import ProfileScreen from "./app/screens/ProfileScreen";
+import InviteLedgerScreen from "./app/screens/InviteLedgerScreen";
 
 export default function App() {
   return (
@@ -29,16 +31,18 @@ export default function App() {
     // <AddNewParticipants />
     // <ManageEntryScreen />
     // <TestingScreen />
+    // <ProfileScreen />
+    // <InviteLedgerScreen />
 
     // <CalculatorComponent />
     // <CalculatorScreen />
 
-    // <NavigationContainer theme={navigationTheme}>
-    //   <AuthNavigator />
-    // </NavigationContainer>
-
     <NavigationContainer theme={navigationTheme}>
-      <DrawerNavigator />
+      <AuthNavigator />
     </NavigationContainer>
+
+    // <NavigationContainer theme={navigationTheme}>
+    //   <AppNavigator />
+    // </NavigationContainer>
   );
 }

@@ -26,6 +26,7 @@ import TableRow from "../components/TableRow";
 import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
 import AppTextInputDynamic from "../components/AppTextInputDynamic";
+import Create_SharePDF from "../components/Create_SharePDF";
 
 const { width, height } = Dimensions.get("window");
 const user_id = 1;
@@ -51,6 +52,7 @@ function LedgerInfoScreen({ navigation, route }) {
     totalExpenses: 0,
   }); // get total receivables and payables from one specific ledger
   const [totalSumParticular, setTotalSumParticular] = useState({}); // get total receivables and payables from one specific particular
+  const [pdfFile, setPdfFile] = useState(); // variable to accountBook variable before creating PDF of it
 
   useEffect(() => {
     if (isFocused) {
@@ -238,7 +240,7 @@ function LedgerInfoScreen({ navigation, route }) {
       } else {
         setTotalSumLedger(calculateTotalAmounts(response));
         // return response;
-        console.log("SUM: ", response);
+        // console.log("SUM: ", response);
       }
     } catch (error) {
       console.error("Error calculating ledger sum: ", error);
@@ -270,6 +272,33 @@ function LedgerInfoScreen({ navigation, route }) {
       setLoading(false);
     }
   };
+  // create and format the data so that it can be expressed in PDF file
+  const loadPDF = async (ledgerID) => {
+    console.log("PDF :", ledgerID);
+    setLoading(true);
+    try {
+      const response = await additionalFunctionsApi.createPDFSpecificLedger(
+        ledgerID.ledger_id
+      );
+      if (!response || response.length === 0 || response.length === undefined) {
+        setPdfFile(null);
+        // return null;
+      } else {
+        const formattedData = response.map((item) => ({
+          ...item,
+          date: new Date(item.date).toISOString().split("T")[0], // Converts to "YYYY-MM-DD"
+        }));
+        setPdfFile(formattedData);
+        // return response;
+      }
+    } catch (error) {
+      console.error("Error creating PDF file: ", error);
+      return null;
+    } finally {
+      setLoading(false);
+      console.log("PDF: ", pdfFile);
+    }
+  };
   //picked or selected ledger from the list of avaible ledgers
   const selectLedgerFromLedgersList = (value) => {
     // console.log("Value: ", value);
@@ -277,6 +306,7 @@ function LedgerInfoScreen({ navigation, route }) {
     setPickedLedger(value);
     loadParticularTable(value.ledger_id);
     loadLedgerSum(value);
+    loadPDF(value);
   };
   //it navigates to detail screen along with respective required data -- entries included in each particular
   const detailEntryScreen = async (value) => {
@@ -324,8 +354,11 @@ function LedgerInfoScreen({ navigation, route }) {
     <>
       <Screen>
         <View style={styles.content}>
+          <View style={{ marginTop: "15%" }} />
+          {pickedLedger && pdfFile && (
+            <Create_SharePDF accountBook={pdfFile} title={pickedLedger} />
+          )}
           <ScrollView>
-            <View style={{ marginTop: "15%" }} />
             {particularLedgerNames ? (
               particularLedgerNames.map((item) => (
                 <TableRow
@@ -341,10 +374,12 @@ function LedgerInfoScreen({ navigation, route }) {
               </AppText>
             )}
           </ScrollView>
-          <AppButton
-            title={"Add New Customer"}
-            onPress={() => navigation.navigate("Add Member")}
-          />
+          {pickedLedger && (
+            <AppButton
+              title={"Add New Customer"}
+              onPress={() => navigation.navigate("Add Member")}
+            />
+          )}
         </View>
 
         <View style={styles.container}>

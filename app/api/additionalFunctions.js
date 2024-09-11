@@ -30,7 +30,22 @@ const getSumAmountFromSpecificParticular = async (particular_id) => {
   }
 };
 
+const createPDFSpecificLedger = async (ledger_id) => {
+  try {
+    const result = await client.get("/createPDF/" + ledger_id);
+    if (result.length === 0) {
+      throw new Error(`PDF file with ledger id is ${ledger_id} not found`);
+    }
+    const PDF = result.data;
+    return PDF;
+  } catch (error) {
+    console.error("Error getting data:", error);
+    throw error;
+  }
+};
+
 export default {
   getSumAmountFromSpecificLedger,
   getSumAmountFromSpecificParticular,
+  createPDFSpecificLedger,
 };
