@@ -238,6 +238,7 @@ function LedgerInfoScreen({ navigation, route }) {
       } else {
         setTotalSumLedger(calculateTotalAmounts(response));
         // return response;
+        console.log("SUM: ", response);
       }
     } catch (error) {
       console.error("Error calculating ledger sum: ", error);

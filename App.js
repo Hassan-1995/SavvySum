@@ -15,6 +15,7 @@ import AuthNavigator from "./app/navigation/AuthNavigator";
 import navigationTheme from "./app/navigation/navigationTheme";
 import ManageEntryScreen from "./app/screens/ManageEntryScreen";
 import TestingScreen from "./app/screens/TestingScreen";
+import DrawerNavigator from "./app/navigation/DrawNavigator";
 
 export default function App() {
   return (
@@ -32,8 +33,12 @@ export default function App() {
     // <CalculatorComponent />
     // <CalculatorScreen />
 
+    // <NavigationContainer theme={navigationTheme}>
+    //   <AuthNavigator />
+    // </NavigationContainer>
+
     <NavigationContainer theme={navigationTheme}>
-      <AuthNavigator />
+      <DrawerNavigator />
     </NavigationContainer>
   );
 }

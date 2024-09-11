@@ -231,7 +231,8 @@ function EntryLedgerScreen({ navigation, route }) {
             />
           </TouchableOpacity>
           <AppText style={styles.entry}>
-            I {title} {title == "gave" ? "to" : "from"} Hammad
+            I {title} {title == "gave" ? "to" : "from"}{" "}
+            {particularID.particular_name}
           </AppText>
         </View>
       </View>

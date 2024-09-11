@@ -73,9 +73,7 @@ function DetailRecordScreen({ navigation, route }) {
           {/* <ScrollView> */}
           <View style={{ marginTop: "10%" }} />
           {entriesParticularNames ? (
-            <CustomerTransactionTable
-              transactions={entriesParticularNames}
-            />
+            <CustomerTransactionTable transactions={entriesParticularNames} />
           ) : (
             <AppText
               style={{
