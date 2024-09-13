@@ -46,8 +46,6 @@ function InviteLedgerScreen({ navigation }) {
   const handleSubmit = async () => {
     setSubmittedText(text);
 
-    console.log("USER ID: ", user.user_id, "ACCESS-KEY: ", text);
-
     setLoading(true);
     try {
       const response =
@@ -60,7 +58,7 @@ function InviteLedgerScreen({ navigation }) {
     } finally {
       loadLedgerTable();
       setLoading(false);
-      setText("")
+      setText("");
     }
   };
 
@@ -103,7 +101,7 @@ function InviteLedgerScreen({ navigation }) {
             />
             <Button
               title="Submit"
-              color={buttonEnabled ? "red" : "blue"}
+              color={colors.primary}
               onPress={handleSubmit}
               disabled={!buttonEnabled}
             />

@@ -1,11 +1,17 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Icon from "./Icon";
+import colors from "../config/colors";
 
 function HeaderComponent(props) {
   return (
     <View style={styles.container}>
-      <Icon name="finance" backgroundColor="transparent" size={50} />
+      <Icon
+        name="calculator-variant"
+        backgroundColor="transparent"
+        size={60}
+        iconColor={colors.white}
+      />
       <Image style={styles.logo} source={require("../assets/LogoName.png")} />
       {/* <View style={styles.menuButtonContainer}></View> */}
     </View>
@@ -18,19 +24,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 60,
     width: "100%",
-  },
-  drawNavigation: {
-    padding: 5,
-  },
-  menuButton: {
-    padding: 5,
-    // backgroundColor: "pink",
-  },
-  menuButtonContainer: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "flex-end",
-    flexDirection: "row",
+    // backgroundColor: "blue",
   },
   logo: {
     width: 150,

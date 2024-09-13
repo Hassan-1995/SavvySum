@@ -53,7 +53,7 @@ function LoginScreen(props) {
         <View style={styles.logoContainer}>
           <Image
             style={styles.logoImage}
-            source={require("../assets/SavvySumLogo_1.png")}
+            source={require("../assets/SavvySyncLogo.png")}
           />
           <Image
             style={styles.nameImage}
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     height: 100,
   },
   logoImage: {
-    width: 105,
-    height: 100,
+    width: 150,
+    height: 110,
     resizeMode: "cover",
     // backgroundColor: "blue",
   },

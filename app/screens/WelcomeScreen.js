@@ -13,7 +13,7 @@ function WelcomeScreen({ navigation }) {
         <View style={styles.logoContainer}>
           <Image
             style={styles.logoImage}
-            source={require("../assets/SavvySumLogo_1.png")}
+            source={require("../assets/SavvySyncLogo.png")}
           />
           <Image
             style={styles.nameImage}
@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
     height: 200,
   },
   logoImage: {
-    // width: 160,
-    width: "45%",
-    height: 160,
+    width: 150,
+    // width: "55%",
+    height: 110,
     // backgroundColor: "blue",
   },
   buttonContainer: {
