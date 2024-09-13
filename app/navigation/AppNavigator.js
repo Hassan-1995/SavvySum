@@ -2,36 +2,23 @@ import React from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LedgerInfoScreen from "../screens/LedgerInfoScreen";
-import WelcomeScreen from "../screens/WelcomeScreen";
+
+import MainNavigator from "./MainNavigator";
 import ProfileScreen from "../screens/ProfileScreen";
+import InviteLedgerScreen from "../screens/InviteLedgerScreen";
 
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = () => (
-  <Tab.Navigator
-    options={{
-      headerShown: false,
-    }}
-  >
-    {/* <Tab.Screen
-      name="Accout"
-      component={AccountProfileScreen}
-      options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="account" color={color} size={size} />
-        ),
-      }}
-    /> */}
+  <Tab.Navigator>
     <Tab.Screen
-      name="Dashboard"
-      component={LedgerInfoScreen}
+      name="Logs"
+      component={MainNavigator}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons
-            name="chart-areaspline"
+            name="book-open-outline"
             color={color}
             size={size}
           />
@@ -39,33 +26,33 @@ const AppNavigator = () => (
       }}
     />
     <Tab.Screen
-      name="Income"
+      name="Profile"
       component={ProfileScreen}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons
-            name="arrow-down-bold-circle"
+            name="account-outline"
             color={color}
             size={size}
           />
         ),
       }}
     />
-    {/* <Tab.Screen
-      name="Budget"
-      component={BudgetScreen}
+    <Tab.Screen
+      name="Token"
+      component={InviteLedgerScreen}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons
-            name="clipboard-text"
+            name="key-outline"
             color={color}
             size={size}
           />
         ),
       }}
-    /> */}
+    />
   </Tab.Navigator>
 );
 

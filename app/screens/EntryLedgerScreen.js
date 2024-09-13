@@ -8,6 +8,7 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -109,108 +110,110 @@ function EntryLedgerScreen({ navigation, route }) {
   return (
     <Screen>
       <View style={styles.content}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setIsFocused(false);
-            Keyboard.dismiss();
-          }}
-        >
-          <View style={styles.displayAreaCalculator}>
-            {lastResult == "" ? (
-              <></>
-            ) : (
-              <AppText style={styles.lastResult}>
-                Last Result: {lastResult}
-              </AppText>
-            )}
-            <View style={styles.inputArea}>
-              <MaterialCommunityIcons
-                name={"cash-plus"}
-                size={30}
-                color={colors.primary}
-                style={styles.icon}
-              />
-              <AppText> Rs </AppText>
-              <TextInput
-                style={styles.displayInput}
-                value={input}
-                placeholder="Enter amount"
-                editable={false} // Read-only, so user can't directly type
-              />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-
-        {input == "" ? (
-          <></>
-        ) : (
-          <>
-            <AppTextInputDynamic
-              placeholder="Details (Optional)"
-              onChangeText={setDescription}
-              value={description}
-              onFocusChange={(focused) => setIsFocused(focused)}
-            />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={showDatepicker}
-                style={styles.buttonWithIcon}
-              >
-                <Icon
-                  name={"calendar-blank-outline"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
-                />
-                {show && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
-                <AppText style={styles.buttonTitle}>
-                  {/* {DateFormat(time)} */}
-                  {DateFormat(date)}
+        <ScrollView contentContainerStyle={{ flex: 1 }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setIsFocused(false);
+              Keyboard.dismiss();
+            }}
+          >
+            <View style={styles.displayAreaCalculator}>
+              {lastResult == "" ? (
+                <></>
+              ) : (
+                <AppText style={styles.lastResult}>
+                  Last Result: {lastResult}
                 </AppText>
-              </TouchableOpacity>
-              <View style={styles.buttonWithIcon}>
-                <Icon
-                  name={"camera-outline"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
+              )}
+              <View style={styles.inputArea}>
+                <MaterialCommunityIcons
+                  name={"cash-plus"}
+                  size={30}
+                  color={colors.primary}
+                  style={styles.icon}
                 />
-                <AppText style={styles.buttonTitle}>Bill copy</AppText>
+                <AppText> Rs </AppText>
+                <TextInput
+                  style={styles.displayInput}
+                  value={input}
+                  placeholder="Enter amount"
+                  editable={false} // Read-only, so user can't directly type
+                />
               </View>
             </View>
-          </>
-        )}
+          </TouchableWithoutFeedback>
 
-        <View style={styles.bottomContainer}>
-          <AppButton
-            title={"save"}
-            disabled={input == "" ? true : false}
-            color={
-              input == "" && title == "gave"
-                ? "red"
-                : input == "" && title == "received"
-                ? "green"
-                : input !== "" && title == "received"
-                ? "income"
-                : "expense"
-            }
-            onPress={saveNewEntry}
-          />
-          {!isFocused ? (
-            <CalculatorComponent
-              onPress={(value) => handleCalculatorButtons(value)}
-            />
-          ) : (
+          {input == "" ? (
             <></>
+          ) : (
+            <>
+              <AppTextInputDynamic
+                placeholder="Details (Optional)"
+                onChangeText={setDescription}
+                value={description}
+                onFocusChange={(focused) => setIsFocused(focused)}
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={showDatepicker}
+                  style={styles.buttonWithIcon}
+                >
+                  <Icon
+                    name={"calendar-blank-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  {show && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={date}
+                      mode={mode}
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )}
+                  <AppText style={styles.buttonTitle}>
+                    {/* {DateFormat(time)} */}
+                    {DateFormat(date)}
+                  </AppText>
+                </TouchableOpacity>
+                <View style={styles.buttonWithIcon}>
+                  <Icon
+                    name={"camera-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  <AppText style={styles.buttonTitle}>Bill copy</AppText>
+                </View>
+              </View>
+            </>
           )}
-        </View>
+
+          <View style={styles.bottomContainer}>
+            <AppButton
+              title={"save"}
+              disabled={input == "" ? true : false}
+              color={
+                input == "" && title == "gave"
+                  ? "red"
+                  : input == "" && title == "received"
+                  ? "green"
+                  : input !== "" && title == "received"
+                  ? "income"
+                  : "expense"
+              }
+              onPress={saveNewEntry}
+            />
+            {!isFocused ? (
+              <CalculatorComponent
+                onPress={(value) => handleCalculatorButtons(value)}
+              />
+            ) : (
+              <></>
+            )}
+          </View>
+        </ScrollView>
       </View>
 
       <View style={styles.container}>
@@ -270,8 +273,9 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   content: {
-    height: height * 0.8,
+    // height: height * 0.8,
     width: "100%",
+    flex: 1,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     overflow: "hidden",
@@ -279,6 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     // backgroundColor: "pink",
     position: "absolute",
+    bottom: 0,
     top: height * 0.2,
   },
   bottomContainer: {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
   View,
@@ -13,12 +13,14 @@ import colors from "../config/colors";
 import HeaderComponent from "../components/HeaderComponent";
 import AppText from "../components/AppText";
 
+import AuthContext from "../auth/context";
+import authStorage from "../auth/storage";
+import DateFormat from "../components/DateFormat";
+
 const { width, height } = Dimensions.get("window");
 
 function ProfileScreen({ navigation }) {
-  const name = "John Doe"; // This can be fetched from your user data or API
-  const mobileNumber = "+1 123 456 7890"; // Fetched from user data
-  const createdAt = "2023-09-10"; // Can be retrieved from user data or API
+  const { user, setUser } = useContext(AuthContext);
 
   const handleLogout = () => {
     Alert.alert(
@@ -32,9 +34,8 @@ function ProfileScreen({ navigation }) {
         {
           text: "Yes",
           onPress: () => {
-            // Perform logout logic here
-            console.log("User logged out");
-            navigation.navigate("Login Screen"); // Navigate to login screen after logging out
+            setUser(null);
+            authStorage.removeToken();
           },
         },
       ],
@@ -47,18 +48,22 @@ function ProfileScreen({ navigation }) {
       <View style={styles.content}>
         <View style={styles.infoContainer}>
           <AppText style={styles.label}>Name</AppText>
-          <AppText style={styles.info}>{name}</AppText>
+          <AppText style={styles.info}>{user.user_name}</AppText>
         </View>
 
         <View style={styles.infoContainer}>
           <AppText style={styles.label}>Mobile Number</AppText>
-          <AppText style={styles.info}>{mobileNumber}</AppText>
+          <AppText style={styles.info}>{user.mobile_phone_number}</AppText>
         </View>
 
         <View style={styles.infoContainer}>
           <AppText style={styles.label}>Created At</AppText>
-          <AppText style={styles.info}>{createdAt}</AppText>
+          <AppText style={styles.info}>
+            {DateFormat(new Date(user.created_at).toISOString().split("T")[0])}
+          </AppText>
         </View>
+
+        
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <AppText style={styles.logoutText}>Log Out</AppText>

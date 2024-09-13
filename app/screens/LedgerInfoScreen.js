@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-
 import ledgersApi from "../api/ledgers";
 import particularsApi from "../api/particulars";
 import entriesApi from "../api/entries";
@@ -28,10 +27,13 @@ import Icon from "../components/Icon";
 import AppTextInputDynamic from "../components/AppTextInputDynamic";
 import Create_SharePDF from "../components/Create_SharePDF";
 
+import AuthContext from "../auth/context";
+
 const { width, height } = Dimensions.get("window");
-const user_id = 1;
 
 function LedgerInfoScreen({ navigation, route }) {
+  const { user } = useContext(AuthContext); // variable for logged user
+
   const isFocused = useIsFocused(); // refresh screen after updating the particular in useEffect
 
   const [modalLedgerListVisible, setModalLedgerListVisible] = useState(false); // modal to show all ledgers by user
@@ -53,6 +55,7 @@ function LedgerInfoScreen({ navigation, route }) {
   }); // get total receivables and payables from one specific ledger
   const [totalSumParticular, setTotalSumParticular] = useState({}); // get total receivables and payables from one specific particular
   const [pdfFile, setPdfFile] = useState(); // variable to accountBook variable before creating PDF of it
+  const [pdfTally, setPdfTally] = useState();
 
   useEffect(() => {
     if (isFocused) {
@@ -68,6 +71,9 @@ function LedgerInfoScreen({ navigation, route }) {
   useEffect(() => {
     loadLedgerTable();
   }, [refreshScreen]);
+  useEffect(() => {
+    loadLedgerTable();
+  }, []);
   //useEffect to calculate the sum of all entries in each particular -- used useEffect due to map function
   useEffect(() => {
     if (particularLedgerNames?.length > 0) {
@@ -99,7 +105,7 @@ function LedgerInfoScreen({ navigation, route }) {
   const loadLedgerTable = async () => {
     setLoading(true);
     try {
-      const response = await ledgersApi.getAllLedgersByUserID(user_id);
+      const response = await ledgersApi.getAllLedgersByUserID(user.user_id);
       setUserLedgers(response);
     } catch (error) {
       console.error("Error loading ledger data:", error);
@@ -113,7 +119,7 @@ function LedgerInfoScreen({ navigation, route }) {
     setLoading(true);
     try {
       const response = await ledgersApi.createLedgerByUserID(
-        user_id,
+        user.user_id,
         ledger_name
       );
     } catch (error) {
@@ -236,11 +242,11 @@ function LedgerInfoScreen({ navigation, route }) {
         );
       if (!response || response.length === 0 || response.length === undefined) {
         setTotalSumLedger({ totalIncome: 0, totalExpenses: 0 });
+        setPdfTally({ totalIncome: 0, totalExpenses: 0 });
         // return null;
       } else {
-        setTotalSumLedger(calculateTotalAmounts(response));
-        // return response;
-        // console.log("SUM: ", response);
+        setTotalSumLedger(calculateLedgerSum(response));
+        setPdfTally(calculateParticularSum(response));
       }
     } catch (error) {
       console.error("Error calculating ledger sum: ", error);
@@ -260,7 +266,7 @@ function LedgerInfoScreen({ navigation, route }) {
             item.particular_id
           );
         if (response && response.length > 0) {
-          sums[item.particular_id] = calculateTotalAmounts(response);
+          sums[item.particular_id] = calculateParticularSum(response);
         } else {
           sums[item.particular_id] = { totalIncome: 0, totalExpenses: 0 };
         }
@@ -274,7 +280,7 @@ function LedgerInfoScreen({ navigation, route }) {
   };
   // create and format the data so that it can be expressed in PDF file
   const loadPDF = async (ledgerID) => {
-    console.log("PDF :", ledgerID);
+    // console.log("PDF :", ledgerID);
     setLoading(true);
     try {
       const response = await additionalFunctionsApi.createPDFSpecificLedger(
@@ -282,6 +288,7 @@ function LedgerInfoScreen({ navigation, route }) {
       );
       if (!response || response.length === 0 || response.length === undefined) {
         setPdfFile(null);
+        setPdfTally(null);
         // return null;
       } else {
         const formattedData = response.map((item) => ({
@@ -296,7 +303,7 @@ function LedgerInfoScreen({ navigation, route }) {
       return null;
     } finally {
       setLoading(false);
-      console.log("PDF: ", pdfFile);
+      // console.log("PDF: ", pdfFile);
     }
   };
   //picked or selected ledger from the list of avaible ledgers
@@ -315,7 +322,7 @@ function LedgerInfoScreen({ navigation, route }) {
     // Calculate the sum of all entries
     const updatedEntriesSum =
       updatedEntries && updatedEntries.length > 0
-        ? calculateTotalAmounts(updatedEntries)
+        ? calculateParticularSum(updatedEntries)
         : { totalIncome: 0, totalExpenses: 0 };
 
     // Now navigate using the updated value directly
@@ -326,8 +333,8 @@ function LedgerInfoScreen({ navigation, route }) {
       particularName: value,
     });
   };
-  // custom function which calcultes the amount based on the type, income and expense
-  const calculateTotalAmounts = (data) => {
+  // custom function which calcultes the amount, in each particular, based on the type, income and expense
+  const calculateParticularSum = (data) => {
     const totalExpenses = data
       .filter((entry) => entry.type === "expense")
       .reduce((total, entry) => total + parseFloat(entry.amount), 0);
@@ -340,6 +347,42 @@ function LedgerInfoScreen({ navigation, route }) {
       totalExpenses,
       totalIncome,
     };
+  };
+  // custom and combile two function which calcultes the amount, in picked ledger, based on the type, income and expense
+  const calculateLedgerSum = (value) => {
+    const data = calculateAmountByParticularId(value);
+
+    let totalExpenses = 0;
+    let totalIncome = 0;
+
+    // Iterate through the data
+    for (let key in data) {
+      const amount = data[key];
+      if (amount < 0) {
+        totalExpenses += Math.abs(amount); // Sum of expenses (absolute values)
+      } else {
+        totalIncome += amount; // Sum of income
+      }
+    }
+
+    return {
+      totalExpenses: totalExpenses,
+      totalIncome: totalIncome,
+    };
+  };
+  const calculateAmountByParticularId = (data) => {
+    const result = {};
+    data.forEach((entry) => {
+      const particularId = entry.particular_id;
+      const amount = parseFloat(entry.amount);
+      const adjustedAmount = entry.type === "income" ? amount : -amount;
+      if (!result[particularId]) {
+        result[particularId] = 0;
+      }
+      result[particularId] += adjustedAmount;
+    });
+
+    return result;
   };
   // custom function to show Icon -- just to avoid repetition
   const renderIcon = (isPicked) => (
@@ -356,7 +399,11 @@ function LedgerInfoScreen({ navigation, route }) {
         <View style={styles.content}>
           <View style={{ marginTop: "15%" }} />
           {pickedLedger && pdfFile && (
-            <Create_SharePDF accountBook={pdfFile} title={pickedLedger} />
+            <Create_SharePDF
+              accountBook={pdfFile}
+              tally={pdfTally}
+              title={pickedLedger}
+            />
           )}
           <ScrollView>
             {particularLedgerNames ? (
@@ -425,7 +472,7 @@ function LedgerInfoScreen({ navigation, route }) {
             >
               <AppText style={styles.modalHeader}>Add New Ledger</AppText>
             </TouchableOpacity>
-            {userLedgers.map((item) => (
+            {userLedgers?.map((item) => (
               <View style={{ flexDirection: "row" }} key={item.ledger_id}>
                 <TouchableOpacity
                   onPress={() => selectLedgerFromLedgersList(item)}

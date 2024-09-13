@@ -5,33 +5,9 @@ import Icon from "./Icon";
 function HeaderComponent(props) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          console.log("TouchableOpacity pressed");
-        }}
-        style={styles.drawNavigation}
-      >
-        <Icon name="menu" backgroundColor="transparent" />
-      </TouchableOpacity>
+      <Icon name="finance" backgroundColor="transparent" size={50} />
       <Image style={styles.logo} source={require("../assets/LogoName.png")} />
-      <View style={styles.menuButtonContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            console.log("TouchableOpacity pressed");
-          }}
-          style={styles.menuButton}
-        >
-          <Icon name="phone-in-talk-outline" backgroundColor="transparent" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            console.log("TouchableOpacity pressed");
-          }}
-          style={styles.menuButton}
-        >
-          <Icon name="bell-outline" backgroundColor="transparent" />
-        </TouchableOpacity>
-      </View>
+      {/* <View style={styles.menuButtonContainer}></View> */}
     </View>
   );
 }

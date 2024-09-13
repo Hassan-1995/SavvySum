@@ -1,25 +1,50 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import * as Yup from "yup";
+import usersApi from "../api/users";
+import { jwtDecode } from "jwt-decode";
 
 import { View, StyleSheet, Image, ScrollView } from "react-native";
 
-import {
-  AppForm,
-  AppFormDate,
-  AppFormField,
-  AppFormPassword,
-  SubmitButton,
-} from "../components/forms";
+import { AppForm, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
 import AppFormPhone from "../components/forms/AppFormPhone";
+import AuthContext from "../auth/context";
+import authStorage from "../auth/storage";
 
 const validationSchema = Yup.object().shape({
   mobile_phone_number: Yup.string().required().min(12).label("Mobile Number"),
 });
 
 function LoginScreen(props) {
-  const Login = (values) => {
-    console.log(values);
+  const authContext = useContext(AuthContext);
+  const [loginID, setLoginID] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const Login = async (values) => {
+    try {
+      const { user, token } = await usersApi.authenticateUser(
+        values.mobile_phone_number
+      );
+
+      if (!user || !token) {
+        setLoginID(false);
+        setLoading(false);
+        return;
+      }
+
+      setLoginID(true);
+
+      const auth = jwtDecode(token);
+      authContext.setUser(user);
+      authStorage.storeToken(token);
+
+      console.log(user);
+    } catch (error) {
+      console.error("Error authenticating user:", error.message);
+      setLoginID(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

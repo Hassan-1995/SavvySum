@@ -44,8 +44,50 @@ const createPDFSpecificLedger = async (ledger_id) => {
   }
 };
 
+const getAccessKeyForLedger = async (user_id, ledger_id) => {
+  try {
+    const result = await client.get(
+      "/accessKey/" + "/" + user_id + "/" + ledger_id
+    );
+    if (result.length === 0) {
+      throw new Error(
+        `Access key with ledger id ${ledger_id} and user id ${user_id} not found`
+      );
+    }
+    const accessKey = result.data;
+    return accessKey;
+  } catch (error) {
+    console.error("Error getting access key:", error);
+    throw error;
+  }
+};
+
+const shareCopyOfLedgerWithAccessKey = async (user_id, access_key) => {
+  const data = {
+    user_id: user_id,
+    access_key: access_key,
+  };
+  console.log("DATA: ", data);
+
+  try {
+    const result = await client.post("/shareLedger/", data);
+    if (result.length === 0) {
+      throw new Error(
+        `Access key ${access_key} and user id ${user_id} not found`
+      );
+    }
+    const shareLedger = result.data;
+    return shareLedger;
+  } catch (error) {
+    console.error("Error creating ledger:", error);
+    throw error;
+  }
+};
+
 export default {
   getSumAmountFromSpecificLedger,
   getSumAmountFromSpecificParticular,
   createPDFSpecificLedger,
+  getAccessKeyForLedger,
+  shareCopyOfLedgerWithAccessKey,
 };

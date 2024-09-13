@@ -1,8 +1,8 @@
 import React from "react";
+import usersApi from "../api/users";
+
 import * as Yup from "yup";
-
 import { View, StyleSheet, Image, ScrollView } from "react-native";
-
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 
 import AppText from "../components/AppText";
@@ -15,8 +15,18 @@ const validationSchema = Yup.object().shape({
 });
 
 function RegisterationScreen(props) {
-  const Register = (values) => {
-    console.log(values);
+  const Register = async (values) => {
+    console.log("values: ", values);
+
+    try {
+      const response = await usersApi.createNewUser(
+        values.user_name,
+        values.mobile_phone_number
+      );
+      console.log("User added successfully", response);
+    } catch (error) {
+      console.error("Error adding user", error.message);
+    }
   };
 
   return (

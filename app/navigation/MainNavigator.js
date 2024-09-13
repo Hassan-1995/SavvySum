@@ -1,8 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import WelcomeScreen from "../screens/WelcomeScreen";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterationScreen from "../screens/RegisterationScreen";
+
 import LedgerInfoScreen from "../screens/LedgerInfoScreen";
 import DetailRecordScreen from "../screens/DetailRecordScreen";
 import AddNewParticipants from "../screens/AddNewParticipants";
@@ -11,12 +9,8 @@ import ManageEntryScreen from "../screens/ManageEntryScreen";
 import ReceiptInfoScreen from "../screens/ReceiptInfoScreen";
 
 const Stack = createNativeStackNavigator();
-const AuthNavigator = () => (
+const MainNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Welcome Screen" component={WelcomeScreen} />
-    <Stack.Screen name="Login Screen" component={LoginScreen} />
-    <Stack.Screen name="Register Screen" component={RegisterationScreen} />
-
     <Stack.Screen name="Ledger Screen" component={LedgerInfoScreen} />
     <Stack.Screen name="Detail Screen" component={DetailRecordScreen} />
     <Stack.Screen name="Add Member" component={AddNewParticipants} />
@@ -26,4 +20,4 @@ const AuthNavigator = () => (
   </Stack.Navigator>
 );
 
-export default AuthNavigator;
+export default MainNavigator;
