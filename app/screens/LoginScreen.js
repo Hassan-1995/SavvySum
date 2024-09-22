@@ -3,13 +3,21 @@ import * as Yup from "yup";
 import usersApi from "../api/users";
 import { jwtDecode } from "jwt-decode";
 
-import { View, StyleSheet, Image, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 
 import { AppForm, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
 import AppFormPhone from "../components/forms/AppFormPhone";
 import AuthContext from "../auth/context";
 import authStorage from "../auth/storage";
+import AppText from "../components/AppText";
+import colors from "../config/colors";
 
 const validationSchema = Yup.object().shape({
   mobile_phone_number: Yup.string().required().min(12).label("Mobile Number"),
@@ -17,28 +25,28 @@ const validationSchema = Yup.object().shape({
 
 function LoginScreen(props) {
   const authContext = useContext(AuthContext);
+  const [user, setUser] = useState([]);
   const [loginID, setLoginID] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const Login = async (values) => {
+    setLoading(false);
     try {
       const { user, token } = await usersApi.authenticateUser(
         values.mobile_phone_number
       );
-
       if (!user || !token) {
         setLoginID(false);
-        setLoading(false);
+        console.log("hello");
         return;
       }
-
       setLoginID(true);
-
       const auth = jwtDecode(token);
       authContext.setUser(user);
       authStorage.storeToken(token);
 
       console.log(user);
+      setUser(user);
     } catch (error) {
       console.error("Error authenticating user:", error.message);
       setLoginID(false);
@@ -60,7 +68,15 @@ function LoginScreen(props) {
             source={require("../assets/LogoName.png")}
           />
         </View>
-
+        {/*         
+        {loginID ? (
+          <>
+            <AppText>Correct number</AppText>
+            <AppText>{user?.user_name}</AppText>
+          </>
+        ) : (
+          <AppText>Wrong number</AppText>
+        )} */}
         <AppForm
           initialValues={{
             mobile_phone_number: "",
@@ -77,7 +93,11 @@ function LoginScreen(props) {
             placeholder="Mobile Number"
             textContentType="emailAddress"
           />
-          <SubmitButton title="Login" />
+          {loading ? (
+            <SubmitButton title="Login" />
+          ) : (
+            <ActivityIndicator size={50} color={colors.secondary} />
+          )}
         </AppForm>
       </ScrollView>
     </Screen>

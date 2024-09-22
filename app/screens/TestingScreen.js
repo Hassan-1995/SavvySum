@@ -1,110 +1,89 @@
 import React from "react";
-import { Button, View } from "react-native";
-import * as Print from "expo-print";
-import { shareAsync } from "expo-sharing";
 
-const TestingScreen = () => {
-  const createPDF = async () => {
-    const queryResult = [
-      {
-        particular_name: "John Doe",
-        description: "Electricity",
-        date: "2024-09-10",
-        amount: 100,
-        type: "expense",
-      },
-      {
-        particular_name: "John Doe",
-        description: "Electricity",
-        date: "2024-09-10",
-        amount: 100,
-        type: "income",
-      },
-    ];
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
+import Screen from "../components/Screen";
+import Gradient from "../components/Gradient";
+import colors from "../config/colors";
 
-    // Generating HTML content with CSS styling
-    let htmlContent = `
-      <html>
-      <head>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-          }
-          h1 {
-            text-align: center;
-            color: #333;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-          }
-          table, th, td {
-            border: 1px solid #ddd;
-          }
-          th, td {
-            padding: 8px;
-            text-align: left;
-          }
-          th {
-            background-color: #f2f2f2;
-            color: #333;
-          }
-          tr:nth-child(even) {
-            background-color: #f9f9f9;
-          }
-          tr:hover {
-            background-color: #f1f1f1;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Account Book</h1>
-        <table>
-          <tr>
-            <th>Particulars</th>
-            <th>Category</th>
-            <th>Date</th>
-            <th>Income</th>
-            <th>Expense</th>
-          </tr>
-    `;
+const { width, height } = Dimensions.get("window");
 
-    queryResult.forEach((item) => {
-      htmlContent += `
-        <tr>
-          <td>${item.particular_name}</td>
-          <td>${item.description}</td>
-          <td>${item.date}</td>
-          <td>${item.type === "income" ? item.amount : ""}</td>
-          <td>${item.type === "expense" ? item.amount : ""}</td>
-        </tr>
-      `;
-    });
-
-    htmlContent += `
-        </table>
-      </body>
-      </html>
-    `;
-
-    try {
-      const { uri } = await Print.printToFileAsync({ html: htmlContent });
-      console.log("PDF saved to:", uri);
-
-      // Share the PDF (optional)
-      await shareAsync(uri);
-    } catch (error) {
-      console.error("Error creating PDF:", error);
-    }
-  };
-
+function TestingScreen(props) {
   return (
-    <View>
-      <Button title="Create PDF" onPress={createPDF} />
-    </View>
+    <Screen>
+      <View style={styles.upperContainer}>
+        <View style={{ height: "50%", backgroundColor: "yellow" }} />
+      </View>
+      <View style={styles.midContainer}>
+        {/* <View style={{ width: 100, height: 100, backgroundColor: "orange" }} /> */}
+      </View>
+      <View style={styles.lowerContainer} />
+    </Screen>
   );
-};
+}
+
+const styles = StyleSheet.create({
+  upperContainer: {
+    flex: 2,
+    backgroundColor: "blue",
+    // zIndex: 1,
+  },
+  midContainer: {
+    // height: height * 0.2,
+    flex: 1,
+    // backgroundColor: "transparent",
+    backgroundColor: "pink",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
+    position: "absolute", // Make it absolute
+    top: 70, // Adjust this value as needed to position it over the upperContainer
+    left: 0,
+    right: 0,
+  },
+  lowerContainer: {
+    // height: height * 0.8,
+    flex: 5,
+    paddingHorizontal: 5,
+    // zIndex: 1,
+    backgroundColor: "red",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  box: {
+    width: 100,
+    height: 100,
+    position: "absolute",
+  },
+  boxA: {
+    width: 100,
+    height: 100,
+    position: "absolute",
+  },
+  boxB: {
+    width: 150,
+    height: 150,
+    position: "absolute",
+  },
+  boxC: {
+    width: 200,
+    height: 200,
+    position: "absolute",
+  },
+  box1: {
+    backgroundColor: "red",
+    zIndex: 3,
+  },
+  box2: {
+    backgroundColor: "blue",
+    zIndex: 2,
+  },
+  box3: {
+    backgroundColor: "green",
+    zIndex: 1,
+  },
+});
 
 export default TestingScreen;

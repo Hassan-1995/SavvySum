@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import entriesApi from "../api/entries";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import {
   View,
@@ -10,6 +11,7 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -28,6 +30,7 @@ import DateFormat from "../components/DateFormat";
 const { width, height } = Dimensions.get("window");
 
 function ManageEntryScreen({ navigation, route }) {
+  const tabBarHeight = useBottomTabBarHeight();
   const { pressedEntry } = route.params;
 
   const [input, setInput] = useState(pressedEntry?.amount); // variable for entered amount
@@ -68,7 +71,7 @@ function ManageEntryScreen({ navigation, route }) {
     const temp = new Date(date).toISOString().split("T")[0];
     setTime(temp);
 
-    const updatedData = {
+    const updatedData = await {
       ...pressedEntry,
       amount: input,
       description: description,
@@ -76,6 +79,7 @@ function ManageEntryScreen({ navigation, route }) {
     };
 
     try {
+      console.log("testing: ", updatedData);
       const response = await entriesApi.updateEntryByEntryID(
         updatedData.entry_id,
         updatedData
@@ -124,162 +128,13 @@ function ManageEntryScreen({ navigation, route }) {
 
   return (
     <Screen>
-      <View style={styles.content}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setIsFocused(false);
-            Keyboard.dismiss();
-          }}
-        >
-          <View style={styles.displayAreaCalculator}>
-            {lastResult == "" ? (
-              <></>
-            ) : (
-              <AppText style={styles.lastResult}>
-                Last Result: {lastResult}
-              </AppText>
-            )}
-            <View style={styles.inputArea}>
-              <MaterialCommunityIcons
-                name={"cash-plus"}
-                size={30}
-                color={colors.primary}
-                style={styles.icon}
-              />
-              <AppText> Rs </AppText>
-              <TextInput
-                style={styles.displayInput}
-                value={input}
-                placeholder="Enter amount"
-                editable={false} // Read-only, so user can't directly type
-              />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-
-        {input == "" ? (
-          <></>
-        ) : (
-          <>
-            <AppTextInputDynamic
-              placeholder="Details (Optional)"
-              onChangeText={setDescription}
-              value={description}
-              onFocusChange={(focused) => setIsFocused(focused)}
-            />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={showDatepicker}
-                style={styles.buttonWithIcon}
-              >
-                <Icon
-                  name={"calendar-blank-outline"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
-                />
-                {show && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
-                <AppText style={styles.buttonTitle}>
-                  {/* {DateFormat(time)} */}
-                  {DateFormat(date)}
-                </AppText>
-              </TouchableOpacity>
-              <View style={styles.buttonWithIcon}>
-                <Icon
-                  name={"camera-outline"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
-                />
-                <AppText style={styles.buttonTitle}>Bill copy</AppText>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginHorizontal: 20,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  justifyContent: "flex-end",
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
-                onPress={() => deleteEntry(pressedEntry.entry_id)}
-              >
-                <Icon
-                  name={"trash-can-outline"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
-                />
-                <AppText style={styles.buttonTitle}>Delete</AppText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  justifyContent: "flex-end",
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
-                onPress={() =>
-                  navigation.navigate("Receipt", {
-                    receipt: pressedEntry,
-                  })
-                }
-              >
-                <Icon
-                  name={"receipt"}
-                  backgroundColor="transparent"
-                  iconColor={colors.primary}
-                />
-                <AppText style={styles.buttonTitle}>Receipt</AppText>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-
-        <View style={styles.bottomContainer}>
-          <AppButton
-            title={"Update"}
-            disabled={input == "" ? true : false}
-            color={
-              input == "" && pressedEntry?.type == "expense"
-                ? "red"
-                : input == "" && pressedEntry?.type == "income"
-                ? "green"
-                : input !== "" && pressedEntry?.type == "income"
-                ? "income"
-                : "expense"
-            }
-            onPress={saveUpdatedEntry}
-          />
-          {!isFocused ? (
-            <CalculatorComponent
-              onPress={(value) => handleCalculatorButtons(value)}
-            />
-          ) : (
-            <></>
-          )}
-        </View>
-      </View>
-
-      <View style={styles.container}>
+      <View style={styles.upperContainer}>
         <Gradient
           color1={colors.secondary}
           color2={colors.primary}
-          height={height * 0.2}
+          height={"100%"}
         />
-        <View style={styles.headerContainer}>
-          <HeaderComponent />
-        </View>
+        <HeaderComponent />
         <View style={styles.subHeaderContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon
@@ -294,14 +149,187 @@ function ManageEntryScreen({ navigation, route }) {
           </AppText>
         </View>
       </View>
+
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.lowerContainer}>
+          {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setIsFocused(false);
+              Keyboard.dismiss();
+            }}
+          >
+            <View style={styles.displayAreaCalculator}>
+              {lastResult == "" ? (
+                <></>
+              ) : (
+                <AppText style={styles.lastResult}>
+                  Last Result: {lastResult}
+                </AppText>
+              )}
+              <View style={styles.inputArea}>
+                <MaterialCommunityIcons
+                  name={"cash-plus"}
+                  size={30}
+                  color={colors.primary}
+                  style={styles.icon}
+                />
+                <AppText> Rs </AppText>
+                <TextInput
+                  style={styles.displayInput}
+                  value={input}
+                  placeholder="Enter amount"
+                  editable={false} // Read-only, so user can't directly type
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+
+          {input == "" ? (
+            <></>
+          ) : (
+            <>
+              <AppTextInputDynamic
+                placeholder="Details (Optional)"
+                onChangeText={setDescription}
+                value={description}
+                onFocusChange={(focused) => setIsFocused(focused)}
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={showDatepicker}
+                  style={styles.buttonWithIcon}
+                >
+                  <Icon
+                    name={"calendar-blank-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  {show && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={date}
+                      mode={mode}
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )}
+                  <AppText style={styles.buttonTitle}>
+                    {/* {DateFormat(time)} */}
+                    {DateFormat(date)}
+                  </AppText>
+                </TouchableOpacity>
+                {/* <View style={styles.buttonWithIcon}>
+                  <Icon
+                    name={"camera-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  <AppText style={styles.buttonTitle}>Bill copy</AppText>
+                </View> */}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginHorizontal: 20,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    justifyContent: "flex-end",
+                    marginTop: 10,
+                    alignItems: "center",
+                  }}
+                  onPress={() => deleteEntry(pressedEntry.entry_id)}
+                >
+                  <Icon
+                    name={"trash-can-outline"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  <AppText style={styles.buttonTitle}>Delete</AppText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    justifyContent: "flex-end",
+                    marginTop: 10,
+                    alignItems: "center",
+                  }}
+                  onPress={() =>
+                    navigation.navigate("Receipt", {
+                      receipt: pressedEntry,
+                    })
+                  }
+                >
+                  <Icon
+                    name={"receipt"}
+                    backgroundColor="transparent"
+                    iconColor={colors.primary}
+                  />
+                  <AppText style={styles.buttonTitle}>Receipt</AppText>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </ScrollView>
+      <View style={[styles.bottomContainer]}>
+        <AppButton
+          title={"Update"}
+          disabled={input == "" ? true : false}
+          color={
+            input == "" && pressedEntry?.type == "expense"
+              ? "red"
+              : input == "" && pressedEntry?.type == "income"
+              ? "green"
+              : input !== "" && pressedEntry?.type == "income"
+              ? "income"
+              : "expense"
+          }
+          onPress={saveUpdatedEntry}
+        />
+        {!isFocused ? (
+          <CalculatorComponent
+            onPress={(value) => handleCalculatorButtons(value)}
+          />
+        ) : (
+          <></>
+        )}
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  upperContainer: {
+    // flex: 1,
+    height: height * 0.15,
+    backgroundColor: "blue",
+    shadowColor: 10,
+    // zIndex: 1,
+  },
+  lowerContainer: {
+    // height: height * 0.4,
+    // backgroundColor: "red",
+    paddingHorizontal: 5,
+    // zIndex: 1,
+  },
+  bottomContainer: {
+    // position: "absolute", // Make it float at the bottom
+    bottom: 0, // Align to the bottom of the lowerContainer
+    left: 0,
+    right: 0,
+    // backgroundColor: "purple",
+    justifyContent: "flex-end",
+  },
+
   container: {
-    flex: 1,
+    // flex: 1,
     position: "relative",
+    height: 120,
+    overflow: "hidden",
   },
   headerContainer: {
     position: "absolute",
@@ -313,13 +341,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   subHeaderContainer: {
-    position: "absolute",
-    top: 60,
-    left: 0,
-    right: 0,
-    height: 60,
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   entry: {
     marginLeft: 10,
@@ -328,21 +352,24 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   content: {
-    height: height * 0.8,
+    // height: height * 0.8,
     width: "100%",
+    flex: 1,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     overflow: "hidden",
     alignSelf: "center",
     backgroundColor: "transparent",
-    // backgroundColor: "pink",
+    backgroundColor: "pink",
     position: "absolute",
-    top: height * 0.2,
+    bottom: 0,
+    marginTop: 150,
+    paddingTop: 20,
   },
-  bottomContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
+  // bottomContainer: {
+  //   // flex: 1,
+  //   justifyContent: "flex-end",
+  // },
   displayAreaCalculator: {
     width: "100%",
     backgroundColor: colors.light,

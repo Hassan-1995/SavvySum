@@ -5,6 +5,8 @@ import particularsApi from "../api/particulars";
 import entriesApi from "../api/entries";
 import additionalFunctionsApi from "../api/additionalFunctions";
 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 import {
   View,
   StyleSheet,
@@ -32,9 +34,12 @@ import AuthContext from "../auth/context";
 const { width, height } = Dimensions.get("window");
 
 function LedgerInfoScreen({ navigation, route }) {
+  const tabBarHeight = useBottomTabBarHeight();
+
   const { user } = useContext(AuthContext); // variable for logged user
 
   const isFocused = useIsFocused(); // refresh screen after updating the particular in useEffect
+  const upDateLedger = useIsFocused();
 
   const [modalLedgerListVisible, setModalLedgerListVisible] = useState(false); // modal to show all ledgers by user
   const [modalAddLedgerVisible, setModalAddLedgerVisible] = useState(false); // modal to add new ledger by user
@@ -57,23 +62,29 @@ function LedgerInfoScreen({ navigation, route }) {
   const [pdfFile, setPdfFile] = useState(); // variable to accountBook variable before creating PDF of it
   const [pdfTally, setPdfTally] = useState();
 
-  useEffect(() => {
-    if (isFocused) {
-      // Code to run when the screen is focused (e.g., refresh data)
-      if (route.params?.updatedParticular) {
-        // Refresh your selected ledger data or update your state here
-        selectLedgerFromLedgersList(route.params.updatedParticular);
-      }
-    }
-  }, [isFocused]);
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     // Code to run when the screen is focused (e.g., refresh data)
+  //     if (route.params?.updatedParticular) {
+  //       // Refresh your selected ledger data or update your state here
+  //       selectLedgerFromLedgersList(route.params.updatedParticular);
+  //     }
+  //   }
+  // }, [isFocused]);
 
   //useEffect to fetch all available ledgers from data base
+  // useEffect(() => {
+  //   loadLedgerTable();
+  // }, [refreshScreen]);
   useEffect(() => {
-    loadLedgerTable();
-  }, [refreshScreen]);
-  useEffect(() => {
-    loadLedgerTable();
-  }, []);
+    if (upDateLedger) {
+      // Code to run when the screen is focused (e.g., refresh data)
+      {
+        pickedLedger && loadParticularTable(pickedLedger.ledger_id);
+      }
+      loadLedgerTable();
+    }
+  }, [upDateLedger]);
   //useEffect to calculate the sum of all entries in each particular -- used useEffect due to map function
   useEffect(() => {
     if (particularLedgerNames?.length > 0) {
@@ -153,6 +164,7 @@ function LedgerInfoScreen({ navigation, route }) {
     setLoading(true);
     try {
       const response = await ledgersApi.deleteLedgerByLedgerID(
+        user.user_id,
         ledger.ledger_id
       );
       // setUserLedgers(response);
@@ -396,16 +408,35 @@ function LedgerInfoScreen({ navigation, route }) {
   return (
     <>
       <Screen>
-        <View style={styles.content}>
-          <View style={{ marginTop: "15%" }} />
-          {pickedLedger && pdfFile && (
-            <Create_SharePDF
-              accountBook={pdfFile}
-              tally={pdfTally}
-              title={pickedLedger}
-            />
-          )}
-          <ScrollView>
+        <View style={styles.upperContainer}>
+          <Gradient
+            color1={colors.secondary}
+            color2={colors.primary}
+            height={"100%"}
+          />
+          <HeaderComponent />
+        </View>
+        <View style={styles.midContainer}>
+          <SummaryCard
+            onLedgerChange={() => setModalLedgerListVisible(true)}
+            currentLedger={
+              loading
+                ? "Loading..."
+                : pickedLedger?.ledger_name || "Pick a ledger"
+            }
+            totalSum={totalSumLedger}
+          />
+        </View>
+        <View style={styles.lowerContainer}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={{ paddingTop: "10%" }} />
+            {pickedLedger && pdfFile && (
+              <Create_SharePDF
+                accountBook={pdfFile}
+                tally={pdfTally}
+                title={pickedLedger}
+              />
+            )}
             {particularLedgerNames ? (
               particularLedgerNames.map((item) => (
                 <TableRow
@@ -427,28 +458,6 @@ function LedgerInfoScreen({ navigation, route }) {
               onPress={() => navigation.navigate("Add Member")}
             />
           )}
-        </View>
-
-        <View style={styles.container}>
-          <Gradient
-            color1={colors.secondary}
-            color2={colors.primary}
-            height={height * 0.2}
-          />
-          <View style={styles.headerContainer}>
-            <HeaderComponent />
-          </View>
-          <View style={styles.summaryContainer}>
-            <SummaryCard
-              onLedgerChange={() => setModalLedgerListVisible(true)}
-              currentLedger={
-                loading
-                  ? "Loading..."
-                  : pickedLedger?.ledger_name || "Pick a ledger"
-              }
-              totalSum={totalSumLedger}
-            />
-          </View>
         </View>
       </Screen>
       {/* Show list of ledgers */}
@@ -531,26 +540,28 @@ function LedgerInfoScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  upperContainer: {
     flex: 1,
-    position: "relative",
+    // backgroundColor: "blue",
+    shadowColor: 10,
+    // zIndex: 1,
   },
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 60,
+  midContainer: {
+    // height: height * 0.2,
+    // backgroundColor: "transparent",
+    // backgroundColor: "pink",
     justifyContent: "center",
     alignItems: "center",
-  },
-  summaryContainer: {
-    position: "absolute",
-    top: 70,
+    zIndex: 2,
+    position: "absolute", // Make it absolute
+    top: height * 0.1, // Adjust this value as needed to position it over the upperContainer
     left: 0,
     right: 0,
-    height: 150,
-    alignItems: "center",
+  },
+  lowerContainer: {
+    flex: 3,
+    paddingHorizontal: 5,
+    // zIndex: 1,
   },
   dash: {
     width: "50%",
@@ -572,19 +583,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  content: {
-    height: "80%",
-    width: "100%",
-    paddingHorizontal: 5,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    overflow: "hidden",
-    alignSelf: "center",
-    backgroundColor: "transparent",
-    // backgroundColor: "pink",
-    position: "absolute",
-    bottom: 0,
-  },
   modalContainer: {
     backgroundColor: "rgba(52, 52, 52, 0.5)",
     width: "100%",
@@ -594,7 +592,6 @@ const styles = StyleSheet.create({
   modalView: {
     position: "absolute", // Makes the View positioned absolutely
     bottom: 0, // Positions it at the bottom of the screen
-    // height: 200, // Sets the height of the View
     width: "100%", // Makes the View take the full width of the screen
     backgroundColor: "white", // Sets the background color
     shadowColor: "#000", // Optional: Add some shadow for better visibility

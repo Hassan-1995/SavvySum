@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 import {
   View,
   StyleSheet,
@@ -27,6 +29,7 @@ import DateFormat from "../components/DateFormat";
 const { width, height } = Dimensions.get("window");
 
 function EntryLedgerScreen({ navigation, route }) {
+  const tabBarHeight = useBottomTabBarHeight();
   const { title, particularID } = route.params;
 
   const [input, setInput] = useState(""); // variable for entered amount
@@ -109,8 +112,31 @@ function EntryLedgerScreen({ navigation, route }) {
 
   return (
     <Screen>
-      <View style={styles.content}>
-        <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <View style={styles.upperContainer}>
+        <Gradient
+          color1={colors.secondary}
+          color2={colors.primary}
+          height={"100%"}
+        />
+        <HeaderComponent />
+
+        <View style={styles.subHeaderContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon
+              name={"arrow-left-drop-circle-outline"}
+              size={50}
+              backgroundColor="transparent"
+            />
+          </TouchableOpacity>
+          <AppText style={styles.entry} numberOfLines={1}>
+            I {title} {title == "gave" ? "to" : "from"}{" "}
+            {particularID.particular_name}
+          </AppText>
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.lowerContainer}>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsFocused(false);
@@ -174,76 +200,71 @@ function EntryLedgerScreen({ navigation, route }) {
                     />
                   )}
                   <AppText style={styles.buttonTitle}>
-                    {/* {DateFormat(time)} */}
                     {DateFormat(date)}
                   </AppText>
                 </TouchableOpacity>
-                <View style={styles.buttonWithIcon}>
+                {/* <View style={styles.buttonWithIcon}>
                   <Icon
                     name={"camera-outline"}
                     backgroundColor="transparent"
                     iconColor={colors.primary}
                   />
                   <AppText style={styles.buttonTitle}>Bill copy</AppText>
-                </View>
+                </View> */}
               </View>
             </>
           )}
-
-          <View style={styles.bottomContainer}>
-            <AppButton
-              title={"save"}
-              disabled={input == "" ? true : false}
-              color={
-                input == "" && title == "gave"
-                  ? "red"
-                  : input == "" && title == "received"
-                  ? "green"
-                  : input !== "" && title == "received"
-                  ? "income"
-                  : "expense"
-              }
-              onPress={saveNewEntry}
-            />
-            {!isFocused ? (
-              <CalculatorComponent
-                onPress={(value) => handleCalculatorButtons(value)}
-              />
-            ) : (
-              <></>
-            )}
-          </View>
-        </ScrollView>
-      </View>
-
-      <View style={styles.container}>
-        <Gradient
-          color1={colors.secondary}
-          color2={colors.primary}
-          height={height * 0.2}
+        </View>
+      </ScrollView>
+      <View style={[styles.bottomContainer]}>
+        <AppButton
+          title={"save"}
+          disabled={input == "" ? true : false}
+          color={
+            input == "" && title == "gave"
+              ? "red"
+              : input == "" && title == "received"
+              ? "green"
+              : input !== "" && title == "received"
+              ? "income"
+              : "expense"
+          }
+          onPress={saveNewEntry}
         />
-        <View style={styles.headerContainer}>
-          <HeaderComponent />
-        </View>
-        <View style={styles.subHeaderContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon
-              name={"arrow-left-drop-circle-outline"}
-              size={50}
-              backgroundColor="transparent"
-            />
-          </TouchableOpacity>
-          <AppText style={styles.entry}>
-            I {title} {title == "gave" ? "to" : "from"}{" "}
-            {particularID.particular_name}
-          </AppText>
-        </View>
+        {!isFocused ? (
+          <CalculatorComponent
+            onPress={(value) => handleCalculatorButtons(value)}
+          />
+        ) : (
+          <></>
+        )}
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  upperContainer: {
+    // flex: 1,
+    height: height * 0.15,
+    backgroundColor: "blue",
+    shadowColor: 10,
+    // zIndex: 1,
+  },
+  lowerContainer: {
+    // flex: 4,
+    // height: height * 0.4,
+    // backgroundColor: "red",
+    // paddingHorizontal: 5,
+    // zIndex: 1,
+  },
+  bottomContainer: {
+    // position: "absolute", // Make it float at the bottom
+    bottom: 0, // Align to the bottom of the lowerContainer
+    left: 0,
+    right: 0,
+    justifyContent: "flex-end",
+  },
   container: {
     flex: 1,
     position: "relative",
@@ -258,16 +279,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   subHeaderContainer: {
-    position: "absolute",
-    top: 60,
-    left: 0,
-    right: 0,
-    height: 60,
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   entry: {
-    marginLeft: 10,
+    paddingLeft: 10,
     fontSize: 24,
     fontWeight: "bold",
     color: colors.white,
@@ -286,10 +303,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     top: height * 0.2,
   },
-  bottomContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
+
   displayAreaCalculator: {
     width: "100%",
     backgroundColor: colors.light,

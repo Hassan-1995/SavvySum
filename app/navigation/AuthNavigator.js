@@ -17,12 +17,12 @@ const AuthNavigator = () => (
     <Stack.Screen name="Login Screen" component={LoginScreen} />
     <Stack.Screen name="Register Screen" component={RegisterationScreen} />
 
-    <Stack.Screen name="Ledger Screen" component={LedgerInfoScreen} />
+    {/* <Stack.Screen name="Ledger Screen" component={LedgerInfoScreen} />
     <Stack.Screen name="Detail Screen" component={DetailRecordScreen} />
     <Stack.Screen name="Add Member" component={AddNewParticipants} />
     <Stack.Screen name="New Transaction Entry" component={EntryLedgerScreen} />
     <Stack.Screen name="Manage Entry" component={ManageEntryScreen} />
-    <Stack.Screen name="Receipt" component={ReceiptInfoScreen} />
+    <Stack.Screen name="Receipt" component={ReceiptInfoScreen} /> */}
   </Stack.Navigator>
 );
 

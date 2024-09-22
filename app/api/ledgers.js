@@ -36,9 +36,9 @@ const createLedgerByUserID = async (user_id, ledger_name) => {
     throw error;
   }
 };
-const deleteLedgerByLedgerID = async (ledger_id) => {
+const deleteLedgerByLedgerID = async (user_id, ledger_id) => {
   try {
-    const result = await client.delete(endPoint + "/" + ledger_id);
+    const result = await client.delete(endPoint + "/" + user_id + "/" + ledger_id);
     if (result.length === 0) {
       throw new Error(`Ledger of id ${ledger_id} not deleted`);
     }

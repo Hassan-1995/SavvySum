@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import particularsApi from "../api/particulars";
 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 import {
   View,
   StyleSheet,
@@ -22,6 +24,7 @@ import AppTextInputDynamic from "../components/AppTextInputDynamic";
 const { width, height } = Dimensions.get("window");
 
 function DetailRecordScreen({ navigation, route }) {
+  const tabBarHeight = useBottomTabBarHeight();
   const { entriesParticularNames, entriesParticularSum, particularName } =
     route.params;
   const [color, setColor] = useState(colors.secondary);
@@ -69,65 +72,13 @@ function DetailRecordScreen({ navigation, route }) {
   return (
     <>
       <Screen>
-        <View style={styles.content}>
-          {/* <ScrollView> */}
-          <View style={{ marginTop: "10%" }} />
-          {entriesParticularNames ? (
-            <CustomerTransactionTable transactions={entriesParticularNames} />
-          ) : (
-            <AppText
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: colors.primary,
-                padding: 20,
-                flex: 1,
-              }}
-            >
-              There is no entry of {particularName.particular_name}.
-            </AppText>
-          )}
-
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-          >
-            <View style={{ width: "45%" }}>
-              <AppButton
-                color="income"
-                title={"Received"}
-                onPress={() =>
-                  navigation.navigate("New Transaction Entry", {
-                    title: "received",
-                    particularID: particularName,
-                  })
-                }
-              />
-            </View>
-            <View style={{ width: "45%" }}>
-              <AppButton
-                color="expense"
-                title={"Gave"}
-                onPress={() =>
-                  navigation.navigate("New Transaction Entry", {
-                    title: "gave",
-                    particularID: particularName,
-                  })
-                }
-              />
-            </View>
-          </View>
-          {/* </ScrollView> */}
-        </View>
-
-        <View style={styles.container}>
+        <View style={styles.upperContainer}>
           <Gradient
             color1={colors.secondary}
             color2={colors.primary}
-            height={height * 0.2}
+            height={"100%"}
           />
-          <View style={styles.headerContainer}>
-            <HeaderComponent />
-          </View>
+          <HeaderComponent />
           <View style={styles.clientInfoContainer}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon
@@ -147,6 +98,8 @@ function DetailRecordScreen({ navigation, route }) {
               />
             </TouchableOpacity>
           </View>
+        </View>
+        <View style={styles.midContainer}>
           <View
             style={[
               styles.amountInfoContainer,
@@ -175,6 +128,50 @@ function DetailRecordScreen({ navigation, route }) {
                   ? "receive"
                   : "give"}
               </AppText>
+            </View>
+          </View>
+        </View>
+        <View style={styles.lowerContainer}>
+          <View style={{ paddingTop: "10%" }} />
+          {entriesParticularNames ? (
+            <CustomerTransactionTable transactions={entriesParticularNames} />
+          ) : (
+            <AppText
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.primary,
+                padding: 20,
+                flex: 1,
+              }}
+            >
+              There is no entry of {particularName.particular_name}.
+            </AppText>
+          )}
+          <View style={styles.bottmButtonContainer}>
+            <View style={styles.widthOfButton}>
+              <AppButton
+                color="income"
+                title={"Received"}
+                onPress={() =>
+                  navigation.navigate("New Transaction Entry", {
+                    title: "received",
+                    particularID: particularName,
+                  })
+                }
+              />
+            </View>
+            <View style={styles.widthOfButton}>
+              <AppButton
+                color="expense"
+                title={"Gave"}
+                onPress={() =>
+                  navigation.navigate("New Transaction Entry", {
+                    title: "gave",
+                    particularID: particularName,
+                  })
+                }
+              />
             </View>
           </View>
         </View>
@@ -211,18 +208,33 @@ function DetailRecordScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  upperContainer: {
     flex: 1,
-    position: "relative",
+    backgroundColor: "blue",
+    shadowColor: 10,
+    // zIndex: 1,
   },
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 60,
+  midContainer: {
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 2,
+    position: "absolute", // Make it absolute
+    top: height * 0.15, // Adjust this value as needed to position it over the upperContainer
+    left: 0,
+    right: 0,
+    marginTop: 10,
+  },
+  lowerContainer: {
+    flex: 3,
+    paddingHorizontal: 5,
+  },
+  bottmButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    // marginBottom: 25,
+  },
+  widthOfButton: {
+    width: "45%",
   },
   clientInfoContainer: {
     position: "absolute",
@@ -234,29 +246,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   amountInfoContainer: {
-    position: "absolute",
-    top: 120,
     height: 80,
     width: "90%",
-    backgroundColor: colors.white,
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "center",
     paddingHorizontal: 20,
     elevation: 20,
-  },
-  content: {
-    height: "80%",
-    width: "100%",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    overflow: "hidden",
-    alignSelf: "center",
-    backgroundColor: "transparent",
-    // backgroundColor: "pink",
-    position: "absolute",
-    bottom: 0,
   },
   name: {
     marginLeft: 10,

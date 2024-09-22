@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // alignItems: "center",
     justifyContent: "space-evenly",
+    zIndex: 3,
   },
   searchBox: {
     width: "90%",
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     overflow: "hidden",
+    alignSelf: "center",
     backgroundColor: colors.light,
   },
   incomeBox: {

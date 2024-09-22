@@ -2,7 +2,7 @@ import React from "react";
 import usersApi from "../api/users";
 
 import * as Yup from "yup";
-import { View, StyleSheet, Image, ScrollView } from "react-native";
+import { View, StyleSheet, Image, ScrollView, Alert } from "react-native";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 
 import AppText from "../components/AppText";
@@ -14,7 +14,7 @@ const validationSchema = Yup.object().shape({
   mobile_phone_number: Yup.string().required().label("Mobile Number"),
 });
 
-function RegisterationScreen(props) {
+function RegisterationScreen({ navigation }) {
   const Register = async (values) => {
     console.log("values: ", values);
 
@@ -23,9 +23,16 @@ function RegisterationScreen(props) {
         values.user_name,
         values.mobile_phone_number
       );
-      console.log("User added successfully", response);
+      Alert.alert(
+        "Success",
+        `Account has been created successfully for user ${values.user_name}`
+      );
+      navigation.navigate("Login Screen");
+      // console.log("User added successfully", response);
     } catch (error) {
-      console.error("Error adding user", error.message);
+      // Show error alert
+      Alert.alert("Error", error.message);
+      // console.error("Error adding user", error.message);
     }
   };
 

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SavvySum",
-    "slug": "SavvySum",
+    "name": "SavvySync",
+    "slug": "SavvySync",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/SavvySyncIcon.png",
@@ -18,13 +18,23 @@
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/SavvySyncIcon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "package": "com.hassan1995.SavvySync"
     },
     "web": {
       "favicon": "./app/assets/SavvySyncIcon.png"
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d761a1f0-de84-4646-844a-651d4daddd25"
+      }
+    }
   }
 }

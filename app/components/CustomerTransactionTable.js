@@ -65,7 +65,7 @@ function CustomerTransactionTable({ transactions }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 10,
     backgroundColor: "white",
   },
   headerRow: {

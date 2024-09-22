@@ -106,19 +106,21 @@ function InviteLedgerScreen({ navigation }) {
               disabled={!buttonEnabled}
             />
           </View>
-          {userLedgers ? (
-            userLedgers.map((item, index) => (
-              <LedgerShareComponent
-                key={item.ledger_id}
-                viewShotRef={(el) => (viewShotRefs.current[index] = el)} // Assign each ViewShot ref
-                handleShare={() => handleShare(index, item)} // Handle share for each ledger
-                ledgerName={item.ledger_name}
-                authKey={item.access_key}
-              />
-            ))
-          ) : (
-            <></>
-          )}
+          <View style={{ paddingBottom: 20 }}>
+            {userLedgers ? (
+              userLedgers.map((item, index) => (
+                <LedgerShareComponent
+                  key={item.ledger_id}
+                  viewShotRef={(el) => (viewShotRefs.current[index] = el)} // Assign each ViewShot ref
+                  handleShare={() => handleShare(index, item)} // Handle share for each ledger
+                  ledgerName={item.ledger_name}
+                  authKey={item.access_key}
+                />
+              ))
+            ) : (
+              <></>
+            )}
+          </View>
         </ScrollView>
       </View>
 
